@@ -18,7 +18,7 @@
 </section><section class="card section-anchor" id="myPeopleCard">
   <p class="eyebrow">MY PEOPLE</p>
   <h2>My reminder list</h2>
-  <p class="muted">Keep your own short list on this device. Pick people from your phone contacts when supported, or pull in the people you already contacted in this app. Phone numbers stay on this device; the shared family list only needs the person's name.</p>
+  <p class="muted">Keep your own short list on this device. If a person was first added by name only and you later select that same person from your phone contacts, the app keeps one entry and adds the phone number to it. Phone numbers stay on this device; the shared family list only needs the person's name.</p>
   <div class="people-toolbar">
     <button class="btn primary" id="pickContacts" type="button">📱 Pick from contacts</button>
     <button class="btn" id="loadMine" type="button">Load people I contacted</button>
@@ -52,10 +52,50 @@ const MESSAGE_PRESETS={
   report:'Hi! We are tracking Alycia’s group ranking every day. You can vote and see the latest progress here: https://adedou2004-netizen.github.io/alycia-vote-helper/ Thank you for helping Alycia! ⭐'
 };
 function normalizePhone(p){return String(p||'').replace(/[^+\d]/g,'')}
-function loadMyPeople(){try{myPeople=JSON.parse(localStorage.getItem(MY_PEOPLE_KEY)||'[]');if(!Array.isArray(myPeople))myPeople=[]}catch{myPeople=[]}renderMyPeople()}
-function saveMyPeople(){localStorage.setItem(MY_PEOPLE_KEY,JSON.stringify(myPeople));renderMyPeople()}
-function personKey(p){return (p.phone?normalizePhone(p.phone):'name:'+String(p.name||'').trim().toLowerCase())}
-function addMyPerson(name,phone=''){name=String(name||'').trim();phone=String(phone||'').trim();if(!name&&!phone)return false;if(!name)name=phone;const key=personKey({name,phone});const existing=myPeople.find(x=>personKey(x)===key);if(existing){if(name&&!existing.name)existing.name=name;if(phone&&!existing.phone)existing.phone=phone;return false}myPeople.push({id:crypto.randomUUID?crypto.randomUUID():Date.now()+'-'+Math.random(),name,phone,selected:true});return true}
+function loadMyPeople(){try{myPeople=JSON.parse(localStorage.getItem(MY_PEOPLE_KEY)||'[]');if(!Array.isArray(myPeople))myPeople=[]}catch{myPeople=[]}dedupeMyPeople();localStorage.setItem(MY_PEOPLE_KEY,JSON.stringify(myPeople));renderMyPeople()}
+function dedupeMyPeople(){
+  const byName=new Map(), byPhone=new Map(), out=[];
+  for(const p of myPeople){
+    const name=String(p.name||'').trim();
+    const phone=String(p.phone||'').trim();
+    const nk=normalizeName(name);
+    const pk=normalizePhone(phone);
+    let existing=(pk&&byPhone.get(pk))||(nk&&byName.get(nk));
+    if(existing){
+      if(!existing.phone&&phone)existing.phone=phone;
+      if(!existing.name&&name)existing.name=name;
+      existing.selected=existing.selected||p.selected;
+      if(pk)byPhone.set(pk,existing);
+      if(nk)byName.set(nk,existing);
+      continue;
+    }
+    const item={...p,name,phone};
+    out.push(item);
+    if(pk)byPhone.set(pk,item);
+    if(nk)byName.set(nk,item);
+  }
+  myPeople=out;
+}
+function saveMyPeople(){dedupeMyPeople();localStorage.setItem(MY_PEOPLE_KEY,JSON.stringify(myPeople));renderMyPeople()}
+function personKey(p){const phone=normalizePhone(p.phone);return phone||('name:'+normalizeName(p.name))}
+function addMyPerson(name,phone=''){
+  name=String(name||'').trim();phone=String(phone||'').trim();
+  if(!name&&!phone)return false;
+  if(!name)name=phone;
+  const nk=normalizeName(name), pk=normalizePhone(phone);
+  const existing=myPeople.find(x=>(pk&&normalizePhone(x.phone)===pk)||(nk&&normalizeName(x.name)===nk));
+  if(existing){
+    let changed=false;
+    if(phone&&normalizePhone(existing.phone)!==pk){existing.phone=phone;changed=true}
+    if(name&&!existing.name){existing.name=name;changed=true}
+    existing.selected=true;
+    dedupeMyPeople();
+    return changed;
+  }
+  myPeople.push({id:crypto.randomUUID?crypto.randomUUID():Date.now()+'-'+Math.random(),name,phone,selected:true});
+  dedupeMyPeople();
+  return true;
+}
 function renderMyPeople(){const box=$('myPeopleList');if(!box)return;$('myPeopleCount').textContent=myPeople.length+' '+(myPeople.length===1?'person':'people');if($('myPeopleFoldCount'))$('myPeopleFoldCount').textContent=myPeople.length;const sortedPeople=[...myPeople].sort((a,b)=>String(a.name||a.phone||'').localeCompare(String(b.name||b.phone||''),undefined,{sensitivity:'base'}));box.innerHTML=sortedPeople.length?sortedPeople.map(p=>`<div class="person-item"><input type="checkbox" class="person-check" data-id="${esc(p.id)}" ${p.selected?'checked':''}><div class="person-main"><div class="person-name">${esc(p.name||p.phone)}</div><div class="person-phone">${p.phone?esc(p.phone):'No phone number saved yet'}</div></div><div class="person-actions"><button class="btn tiny one-text" type="button" data-id="${esc(p.id)}">Text</button><button class="btn tiny remove-person" type="button" data-id="${esc(p.id)}">Remove</button></div></div>`).join(''):'<p class="muted">Your personal list is empty. Pick contacts or load the people you already contacted.</p>'}
 function currentMyMessage(){return $('myPeopleMessage').value.trim()}
 function smsHref(numbers,message){const clean=numbers.map(normalizePhone).filter(Boolean);return 'sms:'+clean.join(',')+'?body='+encodeURIComponent(message)}
