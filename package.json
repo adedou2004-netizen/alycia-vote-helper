@@ -1,0 +1,11 @@
+{
+  "name": "alycia-vote-helper-automation",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "capture-rank": "node scripts/capture-rank.mjs"
+  },
+  "dependencies": {
+    "playwright": "1.55.0"
+  }
+}
