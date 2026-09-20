@@ -1,0 +1,53 @@
+name: Alycia 3 PM rank capture
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Run at both possible UTC equivalents of 3 PM Toronto.
+    # The script itself only captures when Toronto local hour is 15.
+    - cron: "0 19 * * *"
+    - cron: "0 20 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Capture and save ranking
+        env:
+          ALYCIA_CAPTURE_TOKEN: ${{ secrets.ALYCIA_CAPTURE_TOKEN }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            node scripts/capture-rank.mjs --force
+          else
+            node scripts/capture-rank.mjs
+          fi
+
+      - name: Upload capture evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: alycia-rank-capture-${{ github.run_id }}
+          path: |
+            capture-evidence.png
+            capture-failure.png
+          if-no-files-found: ignore
+          retention-days: 14
