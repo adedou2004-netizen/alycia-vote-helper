@@ -103,12 +103,10 @@ async function extractGroup(page, url) {
 
 async function main() {
   const t = torontoParts();
-  if (!FORCE && Number(t.hour) !== 15) {
-    console.log(`Skipping: Toronto time is ${t.hour}:${t.minute}; this workflow only captures at 3 PM.`);
-    return;
-  }
-
   if (!TOKEN) throw new Error("GitHub secret ALYCIA_CAPTURE_TOKEN is not configured");
+  if (FORCE && Number(t.hour) !== 15) {
+    console.log(`Scheduled/manual capture started at Toronto time ${t.hour}:${t.minute}; continuing instead of skipping.`);
+  }
 
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext({
