@@ -3,10 +3,10 @@ name: Alycia 3 PM rank capture
 on:
   workflow_dispatch:
   schedule:
-    # Run at both possible UTC equivalents of 3 PM Toronto.
-    # The script itself only captures when Toronto local hour is 15.
+    # 3 PM Toronto while daylight saving time is in effect.
+    # GitHub may start scheduled workflows late, so the capture must run
+    # whenever this scheduled job actually starts instead of skipping.
     - cron: "0 19 * * *"
-    - cron: "0 20 * * *"
 
 permissions:
   contents: read
@@ -34,11 +34,7 @@ jobs:
         env:
           ALYCIA_CAPTURE_TOKEN: ${{ secrets.ALYCIA_CAPTURE_TOKEN }}
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            node scripts/capture-rank.mjs --force
-          else
-            node scripts/capture-rank.mjs
-          fi
+          node scripts/capture-rank.mjs --force
 
       - name: Upload capture evidence
         if: always()
