@@ -2,6 +2,12 @@ name: Alycia hourly rank capture
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/alycia-rank-capture.yml"
+      - "scripts/capture-rank.mjs"
   schedule:
     # Run every hour at 7 minutes past the hour.
     # Using :07 avoids the heavy GitHub Actions load that often occurs at :00.
