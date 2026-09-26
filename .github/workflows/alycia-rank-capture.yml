@@ -1,17 +1,7 @@
-name: Alycia hourly rank capture
+name: Alycia manual rank capture
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - ".github/workflows/alycia-rank-capture.yml"
-      - "scripts/capture-rank.mjs"
-  schedule:
-    # Run every hour at 7 minutes past the hour.
-    # Using :07 avoids the heavy GitHub Actions load that often occurs at :00.
-    - cron: "7 * * * *"
 
 permissions:
   contents: read
@@ -40,13 +30,11 @@ jobs:
           ALYCIA_CAPTURE_TOKEN: ${{ secrets.ALYCIA_CAPTURE_TOKEN }}
         run: node scripts/capture-rank.mjs
 
-      - name: Upload capture evidence
-        if: always()
+      - name: Upload failure evidence
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: alycia-rank-capture-${{ github.run_id }}
-          path: |
-            capture-evidence.png
-            capture-failure.png
+          name: alycia-rank-failure-${{ github.run_id }}
+          path: capture-failure.png
           if-no-files-found: ignore
-          retention-days: 14
+          retention-days: 3
