@@ -90,8 +90,6 @@ async function extractTop20(page) {
   await page.goto(GROUP_URL, { waitUntil: "domcontentloaded", timeout: 45000 });
   await page.waitForTimeout(2200);
   await scrollAndExpand(page);
-  await page.screenshot({ path: "capture-evidence.png", fullPage: true });
-
   const items = await page.locator('a[href*="/2026/"]').evaluateAll((anchors) => {
     const seen = new Map();
     for (const a of anchors) {
