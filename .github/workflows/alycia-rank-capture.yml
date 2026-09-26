@@ -1,12 +1,11 @@
-name: Alycia 3 PM rank capture
+name: Alycia hourly rank capture
 
 on:
   workflow_dispatch:
   schedule:
-    # 3 PM Toronto while daylight saving time is in effect.
-    # GitHub may start scheduled workflows late, so the capture must run
-    # whenever this scheduled job actually starts instead of skipping.
-    - cron: "0 19 * * *"
+    # Run every hour at 7 minutes past the hour.
+    # Using :07 avoids the heavy GitHub Actions load that often occurs at :00.
+    - cron: "7 * * * *"
 
 permissions:
   contents: read
@@ -30,11 +29,10 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Capture and save ranking
+      - name: Capture and save Top-20 ranking
         env:
           ALYCIA_CAPTURE_TOKEN: ${{ secrets.ALYCIA_CAPTURE_TOKEN }}
-        run: |
-          node scripts/capture-rank.mjs --force
+        run: node scripts/capture-rank.mjs
 
       - name: Upload capture evidence
         if: always()
