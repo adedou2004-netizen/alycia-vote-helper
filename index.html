@@ -110,6 +110,24 @@ details.card>summary::-webkit-details-marker{display:none}
   </div>
 </section>
 
+<section class="card qr section-anchor" id="quickVoteCard">
+  <p class="eyebrow">QR</p>
+  <h2>Scan to vote for Alycia</h2>
+  <img alt="QR code for Alycia's voting page" src="https://quickchart.io/qr?text=https%3A%2F%2Fthesuperkid.org%2F2026%2Falycia-5613&size=270">
+  <div class="form" style="margin-top:14px;text-align:left">
+    <label>Name to save on this phone
+      <input id="quickContactName" maxlength="80" placeholder="Person's name">
+    </label>
+    <label>List
+      <select id="quickListType">
+        <option value="daily">Daily</option>
+        <option value="occasional">Occasional</option>
+      </select>
+    </label>
+    <button class="btn primary" id="saveQuickContact" type="button">Save on my list and mark circle</button>
+  </div>
+</section>
+
 <section class="card section-anchor" id="myPeopleCard">
   <p class="eyebrow">MY LISTS</p>
   <h2>Who I remind</h2>
@@ -161,24 +179,6 @@ details.card>summary::-webkit-details-marker{display:none}
   <div id="contactList" class="list"></div>
   <p id="activitySync" class="muted" style="font-size:.8rem">Connecting…</p>
   <button class="btn" id="activityRefresh" type="button">Refresh</button>
-</section>
-
-<section class="card qr section-anchor" id="quickVoteCard">
-  <p class="eyebrow">QR</p>
-  <h2>Scan to vote for Alycia</h2>
-  <img alt="QR code for Alycia's voting page" src="https://quickchart.io/qr?text=https%3A%2F%2Fthesuperkid.org%2F2026%2Falycia-5613&size=270">
-  <div class="form" style="margin-top:14px;text-align:left">
-    <label>Name to save on this phone
-      <input id="quickContactName" maxlength="80" placeholder="Person's name">
-    </label>
-    <label>List
-      <select id="quickListType">
-        <option value="daily">Daily</option>
-        <option value="occasional">Occasional</option>
-      </select>
-    </label>
-    <button class="btn primary" id="saveQuickContact" type="button">Save on my list and mark circle</button>
-  </div>
 </section>
 
 <section class="card section-anchor" id="rankReports">
