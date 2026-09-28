@@ -466,12 +466,27 @@ function stampLocal(people){
 async function textPeople(people){
   const withPhone=people.filter(p=>normalizePhone(p.phone));
   if(!withPhone.length)return toast('No phone number saved for the selected people');
-  const msg=currentMyMessage(withPhone.length===1?withPhone[0].name:'');
+
+  // Keep every reminder private: never put multiple recipients in one SMS.
+  // For a single person, open the SMS directly. For multiple selected people,
+  // send them one at a time so replies cannot turn into a group conversation.
+  if(withPhone.length>1){
+    const first=withPhone[0];
+    const remaining=withPhone.slice(1);
+    localStorage.setItem('alycia.pendingTexts.v1',JSON.stringify(remaining.map(p=>p.id)));
+    toast('Opening a private text for '+firstName(first.name)+'. Return here for the next person.');
+    return textPeople([first]);
+  }
+
+  const p=withPhone[0];
+  const msg=currentMyMessage(p.name||'');
   if(msg.length>320)return toast('Shorten the message before sending');
-  for(const p of withPhone){await markCircle(p,'Text')}
-  stampLocal(withPhone);
+
+  await markCircle(p,'Text');
+  stampLocal([p]);
   await loadShared();
-  const href='sms:'+withPhone.map(p=>normalizePhone(p.phone)).join(',')+'?body='+encodeURIComponent(msg);
+
+  const href='sms:'+normalizePhone(p.phone)+'?body='+encodeURIComponent(msg);
   window.location.href=href;
 }
 async function markOnly(people){
@@ -552,6 +567,19 @@ $('myPeopleList').onclick=e=>{
 };
 function selectedOnTab(){return myPeople.filter(p=>p.selected&&(listTab==='occasional'?p.listType==='occasional':p.listType!=='occasional'))}
 $('textSelected').onclick=()=>{const selected=selectedOnTab();if(!selected.length)return toast('Select at least one person');textPeople(selected)};
+window.addEventListener('focus',()=>{
+  try{
+    const ids=JSON.parse(localStorage.getItem('alycia.pendingTexts.v1')||'[]');
+    if(!Array.isArray(ids)||!ids.length)return;
+    const nextId=ids.shift();
+    localStorage.setItem('alycia.pendingTexts.v1',JSON.stringify(ids));
+    const p=myPeople.find(x=>String(x.id)===String(nextId));
+    if(p)setTimeout(()=>textPeople([p]),250);
+    else if(!ids.length)localStorage.removeItem('alycia.pendingTexts.v1');
+  }catch{
+    localStorage.removeItem('alycia.pendingTexts.v1');
+  }
+});
 $('markSelected').onclick=()=>markOnly(selectedOnTab());
 $('pickContacts').onclick=async()=>{
   if(!('contacts' in navigator)||!navigator.contacts?.select){$('contactPickerNote').textContent='This browser cannot open the contact picker. Use Add name, or open the page in Chrome on Android.';return toast('Contact picker is not supported here')}
