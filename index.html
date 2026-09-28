@@ -1,175 +1,316 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#5d35d8"><title>Alycia Vote Helper</title><style>:root{--ink:#252036;--muted:#6e687d;--purple:#5d35d8;--purple2:#4323aa;--green:#187b57;--border:#e5e0f1;--bg:#f6f4fb}*{box-sizing:border-box}body{margin:0;background:linear-gradient(#eee9ff,#f6f4fb 420px);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,sans-serif}.wrap{max-width:850px;margin:auto;padding:14px 12px 50px}.card{background:#fff;border:1px solid var(--border);border-radius:22px;padding:19px;margin:0 0 14px;box-shadow:0 10px 28px #392d5b10}h1,h2,h3{margin:.15em 0}.muted{color:var(--muted);line-height:1.45}.eyebrow{font-size:.76rem;font-weight:800;letter-spacing:.1em;color:var(--purple)}.actions{display:flex;gap:9px;flex-wrap:wrap}.btn{border:0;border-radius:13px;min-height:46px;padding:11px 15px;font-weight:800;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;background:#eee9ff;color:var(--purple2)}.primary{background:var(--purple);color:#fff}.success{background:var(--green);color:#fff}.big{font-size:1.08rem;min-height:56px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.stat{text-align:center}.stat strong{font-size:1.8rem}.stat span{display:block;color:var(--muted);font-size:.8rem}.form{display:grid;gap:9px;align-items:end}.form.two{grid-template-columns:1fr auto}.form.contact{grid-template-columns:1.5fr 1fr auto}.form.confirm{grid-template-columns:1.5fr .8fr auto}label{display:grid;gap:5px;font-size:.84rem;font-weight:700;color:var(--muted)}input,textarea,select{width:100%;font:inherit;border:1px solid var(--border);border-radius:11px;padding:11px 12px;background:#fff;color:var(--ink)}textarea{resize:vertical}.list{display:grid;gap:9px;margin-top:14px}.row{border:1px solid var(--border);border-radius:15px;padding:12px;display:flex;justify-content:space-between;gap:12px;align-items:center}.row.done{background:#f0faf5;border-color:#cfe8dc}.meta,.status{font-size:.8rem;color:var(--muted);margin-top:4px;overflow-wrap:anywhere}.tiny{min-height:38px;padding:8px 10px;font-size:.83rem}.qr{text-align:center}.qr-contact-box{max-width:520px;margin:14px auto 0;text-align:left;display:grid;gap:9px}.qr img{width:min(270px,80vw);height:auto;border:9px solid #fff;border-radius:18px;box-shadow:0 7px 22px #0001}.rank-slot{border:1px solid var(--border);border-radius:15px;padding:12px;display:flex;justify-content:space-between;align-items:center;gap:12px}.rank-slot.done{background:#f0faf5;border-color:#cfe8dc}.rank-slot.due{background:#faf8ff;border-color:#c7b9ff}.badge{min-width:52px;height:42px;border-radius:12px;background:var(--green);color:#fff;display:grid;place-items:center;font-weight:900}.history{display:grid;gap:7px;margin-top:12px}.history>div{display:flex;justify-content:space-between;padding:9px 10px;border-radius:10px;background:#f8f6fc}.note{font-size:.88rem;line-height:1.45;background:#f8f6fc;padding:11px 13px;border-radius:12px}.summary{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.pill{background:#f8f6fc;border-radius:999px;padding:7px 10px;font-size:.82rem}.divider{height:1px;background:var(--border);margin:18px 0}.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#211d2e;color:#fff;padding:10px 15px;border-radius:999px;opacity:0;pointer-events:none;transition:.2s;z-index:10}.toast.show{opacity:1}.report-table{width:100%;border-collapse:collapse;margin-top:12px}.report-table th,.report-table td{padding:9px 7px;border-bottom:1px solid var(--border);text-align:left;font-size:.88rem}.report-table th{color:var(--muted);font-size:.78rem}.move-up{color:var(--green);font-weight:800}.move-down{color:#a53b3b;font-weight:800}.move-flat{color:var(--muted);font-weight:700}.report-wrap{overflow-x:auto}.report-highlight{background:#faf8ff}.report-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.report-kpi{background:#f8f6fc;border-radius:13px;padding:10px;text-align:center}.report-kpi strong{display:block;font-size:1.35rem}.report-kpi span{font-size:.76rem;color:var(--muted)}.people-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.people-list{display:grid;gap:8px;margin-top:12px}.person-item{display:flex;gap:10px;align-items:center;border:1px solid var(--border);border-radius:14px;padding:11px}.person-item input[type=checkbox]{width:22px;height:22px;flex:0 0 auto}.person-main{min-width:0;flex:1}.person-name{font-weight:800}.person-phone{font-size:.8rem;color:var(--muted);overflow-wrap:anywhere}.person-actions{display:flex;gap:6px;flex-wrap:wrap}.preset-row{display:grid;grid-template-columns:1fr;gap:8px;margin-top:12px}.select-all{font-size:.84rem;font-weight:700;color:var(--purple2);cursor:pointer}.my-people-count{font-size:.82rem;color:var(--muted)}.topnav{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}.topnav .btn{min-height:58px}.today-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}.today-box{background:#f8f6fc;border-radius:14px;padding:12px;text-align:center}.today-box strong{display:block;font-size:1.5rem}.today-box span{font-size:.76rem;color:var(--muted)}details.card>summary{cursor:pointer;font-weight:800;font-size:1.05rem;list-style:none}details.card>summary::-webkit-details-marker{display:none}details.card>summary:after{content:'▾';float:right;color:var(--purple)}details.card[open]>summary:after{content:'▴'}.section-anchor{scroll-margin-top:12px}@media(max-width:700px){.today-grid{grid-template-columns:repeat(2,1fr)}.topnav{grid-template-columns:1fr 1fr 1fr}.topnav .btn{padding:9px 7px;font-size:.88rem}.form,.form.two,.form.contact,.form.confirm{grid-template-columns:1fr}.actions .btn{flex:1}.row{align-items:stretch;flex-direction:column}.rank-slot{align-items:stretch}.wrap{padding-left:10px;padding-right:10px}}
-.rank-chart{margin-top:10px;border:1px solid var(--line);border-radius:14px;background:#fff;overflow-x:auto;padding:8px}
-.rank-chart svg{display:block;min-width:680px;width:100%;height:auto}
-.trend-legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:10px;font-size:.78rem}
-.legend-item{display:flex;align-items:center;gap:6px}
-.legend-swatch{width:20px;height:3px;border-radius:2px;background:#718096}
-.legend-swatch.alycia{height:5px;background:#c23b5a}
-</style></head><body><main class="wrap"><section class="card section-anchor" id="todayCard">
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#5d35d8">
+<title>Alycia Vote Helper</title>
+<style>
+:root{--ink:#252036;--muted:#6e687d;--purple:#5d35d8;--purple2:#4323aa;--green:#187b57;--border:#e5e0f1;--bg:#f6f4fb}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(#eee9ff,#f6f4fb 420px);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+.wrap{max-width:720px;margin:auto;padding:14px 12px 70px}
+.card{background:#fff;border:1px solid var(--border);border-radius:22px;padding:18px;margin:0 0 14px;box-shadow:0 10px 28px #392d5b10}
+h1,h2{margin:.15em 0}
+.muted{color:var(--muted);line-height:1.45}
+.eyebrow{font-size:.76rem;font-weight:800;letter-spacing:.1em;color:var(--purple)}
+.btn{border:0;border-radius:13px;min-height:46px;padding:11px 14px;font-weight:800;font:inherit;cursor:pointer;background:#eee9ff;color:var(--purple2)}
+.primary{background:var(--purple);color:#fff}
+.success{background:var(--green);color:#fff}
+.big{min-height:54px;width:100%}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.stat{background:#f8f6fc;border-radius:14px;padding:12px;text-align:center}
+.stat strong{display:block;font-size:1.45rem}
+.stat span{font-size:.76rem;color:var(--muted)}
+input,textarea,select{width:100%;font:inherit;border:1px solid var(--border);border-radius:11px;padding:11px 12px;background:#fff;color:var(--ink)}
+textarea{resize:vertical}
+.row{display:flex;gap:10px;align-items:center;border:1px solid var(--border);border-radius:14px;padding:10px;margin-top:8px;background:#fff}
+.row .grow{flex:1;min-width:0}
+.pill{border-radius:999px;padding:4px 8px;font-size:.75rem;font-weight:800}
+.due{background:#e7f6ef;color:var(--green)}
+.done{background:#f3f1f8;color:var(--muted)}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.back{display:flex;align-items:center;gap:8px;background:none;border:0;color:var(--purple2);font-weight:800;font:inherit;padding:0 0 8px;cursor:pointer}
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#211d2e;color:#fff;padding:10px 15px;border-radius:999px;opacity:0;pointer-events:none;transition:.2s;z-index:10;max-width:90vw;text-align:center}
+.toast.show{opacity:1}
+.report-table{width:100%;border-collapse:collapse;margin-top:12px}
+.report-table th,.report-table td{padding:9px 7px;border-bottom:1px solid var(--border);text-align:left;font-size:.86rem}
+.report-table th{color:var(--muted);font-size:.76rem}
+.move-up{color:var(--green);font-weight:800}
+.move-down{color:#a53b3b;font-weight:800}
+.move-flat{color:var(--muted)}
+.report-highlight{background:#faf8ff}
+.report-wrap{overflow-x:auto}
+.hit{background:#e7f6ef;border:1px solid #cfe8dc;border-radius:14px;padding:12px;margin-top:12px}
+.miss{background:#faf8ff;border:1px solid var(--border);border-radius:14px;padding:12px;margin-top:12px}
+.feed{margin-top:12px}
+.feed div{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);font-size:.9rem}
+@media(max-width:640px){.grid3{grid-template-columns:1fr 1fr 1fr}.grid3 .btn{padding:9px 6px;font-size:.82rem}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<section id="screen-home" class="card">
   <p class="eyebrow">TODAY</p>
-  <h1>Alycia Vote Helper ⭐</h1>
-  <p class="muted">Check the situation first. Then remind your people only when needed.</p>
-  <div class="today-grid">
-    <div class="today-box"><strong id="todayRank">—</strong><span>Alycia rank</span></div>
-    <div class="today-box"><strong id="todayTop20">—</strong><span>Current round</span></div>
-    <div class="today-box"><strong id="todayContacted">0</strong><span>People contacted</span></div>
+  <h1>Alycia Vote Helper</h1>
+  <p class="muted">Check the rank, then remind only people who are due. Family never sees phone numbers.</p>
+  <label class="muted" style="display:block;margin-top:10px;font-size:.84rem;font-weight:700">Your name or initials
+    <input id="who" maxlength="40" placeholder="e.g. Adedou" style="margin-top:6px">
+  </label>
+  <div class="grid2" style="margin-top:12px">
+    <div class="stat"><strong id="todayRank">—</strong><span>Alycia rank</span></div>
+    <div class="stat"><strong id="todayDelta">—</strong><span>Since last snapshot</span></div>
+    <div class="stat"><strong id="todayDue">0</strong><span>My daily due</span></div>
+    <div class="stat"><strong id="todayFamily">0</strong><span>Family contacted today</span></div>
   </div>
-  <div class="topnav">
-    <button class="btn primary" id="goPeople" type="button">👥 My people</button>
-    <button class="btn" id="jumpReports" type="button">📊 Reports</button>
-    <button class="btn" id="goMore" type="button">Family activity</button>
+  <div class="grid3" style="margin-top:12px">
+    <button class="btn primary" id="goLists" type="button">My lists</button>
+    <button class="btn" id="goCheck" type="button">Check name</button>
+    <button class="btn" id="goReports" type="button">Reports</button>
   </div>
-  <div class="actions" style="margin-top:10px"><button class="btn success big" id="voteAlycia">Vote for Alycia</button><button class="btn" id="shareVote">Share voting link</button></div><p class="muted" style="font-size:.8rem;margin-top:8px">After sharing, you can enter the person's name to add them to People already contacted. The phone does not tell the app whether you chose Messenger, Facebook, email, or another app.</p>
-</section><section class="card qr section-anchor" id="quickVoteCard">
-  <p class="eyebrow">QR</p>
-  <h2>Scan to vote for Alycia</h2>
-  <img alt="QR code for Alycia's voting page" src="https://quickchart.io/qr?text=https%3A%2F%2Fthesuperkid.org%2F2026%2Falycia-5613&size=270">
-  <details style="margin-top:14px;text-align:left">
-    <summary><strong>Add name after QR</strong></summary>
-    <div class="qr-contact-box">
-      <label>Name
-        <input id="quickContactName" maxlength="80" placeholder="Person's name">
-      </label>
-      <button class="btn primary" id="saveQuickContact" type="button">Save contact</button>
-    </div>
-  </details>
-</section><section class="card section-anchor" id="myPeopleCard">
-  <p class="eyebrow">MY PEOPLE</p>
-  <h2>My reminder list</h2>
-  <p class="muted">Pick the people you normally remind from your phone contacts. If someone was first added by name after using the QR code, selecting them later from your contacts adds their phone number and keeps only one entry.</p>
-  <div class="people-toolbar">
-    <button class="btn primary" id="pickContacts" type="button">📱 Pick from contacts</button>
-    <button class="btn" id="loadMine" type="button">Load people I contacted</button>
+  <button class="btn success big" id="goVote" type="button" style="margin-top:10px">Vote for Alycia</button>
+  <button class="btn big" id="goShare" type="button" style="margin-top:8px">Share voting link</button>
+</section>
 
+<section id="screen-lists" class="card" hidden>
+  <button class="back" data-back type="button">← Today</button>
+  <h2>My lists</h2>
+  <p class="muted" id="listHint">These names and phones stay on this phone.</p>
+  <div class="seg">
+    <button class="btn primary" id="tabDaily" type="button">Daily</button>
+    <button class="btn" id="tabOcc" type="button">Occasional</button>
   </div>
-  <div class="preset-row">
-    <label>Message to send
-      <select id="messagePreset">
-        <option value="daily">Daily vote reminder</option>
-        <option value="report">Rank report update</option>
-        <option value="custom">Custom message below</option>
-      </select>
-    </label>
-    <textarea id="myPeopleMessage" rows="4">Hi! If you have a moment today, could you give Alycia your free Super Kid vote? It only takes a minute: https://thesuperkid.org/2026/alycia-5613 Thank you! ⭐</textarea>
+  <div class="grid2" style="margin-top:10px">
+    <button class="btn primary" id="pickContacts" type="button">Pick from contacts</button>
+    <button class="btn" id="addNameBtn" type="button">Add name</button>
   </div>
-  <div class="people-toolbar">
-    <button class="btn primary big" id="textSelected" type="button">Text selected</button>
-    <button class="btn" id="copySelectedMessage" type="button">Copy message</button>
-    <span class="select-all" id="toggleAllPeople">Select all</span>
-    <span class="my-people-count" id="myPeopleCount">0 people</span>
+  <div id="addBox" hidden style="margin-top:10px">
+    <input id="addName" maxlength="80" placeholder="Name">
+    <input id="addPhone" maxlength="30" placeholder="Phone (optional)" style="margin-top:8px">
+    <button class="btn primary" id="saveAdd" type="button" style="margin-top:8px">Save to this list</button>
   </div>
-  <details id="myPeopleDetails" style="margin-top:12px">
-    <summary><strong>Show my people list</strong> · <span id="myPeopleFoldCount">0</span></summary>
-    <div id="myPeopleList" class="people-list"></div>
-  </details>
   <p id="contactPickerNote" class="muted" style="font-size:.8rem"></p>
-</section><details class="card section-anchor" id="familyActivityDetails"><summary>Family activity · shared with everyone</summary><div style="margin-top:14px"><p class="muted">Use this only when you want to check who has already been contacted.</p>  <div class="form two"><label>Your name / initials<input id="activityWho" maxlength="50" placeholder="e.g. Adedou"></label><button class="btn" id="activityRefresh" type="button">Refresh</button></div>    <details id="contactedDetails" style="margin-top:18px"><summary><strong>People already contacted</strong> · <span id="contactedFoldCount">0</span></summary><div id="contactList" class="list"></div></details>  <div id="rankActivity" hidden></div>  <p id="activitySync" class="muted" style="font-size:.8rem">Connecting…</p></div></details><section class="card section-anchor" id="rankReports">  <p class="eyebrow">RANK MOVEMENT REPORTS</p>
+  <div id="peopleList"></div>
+  <div style="margin-top:14px">
+    <p class="muted" style="font-size:.84rem;font-weight:700">Today's SMS · wording changes by day</p>
+    <textarea id="smsPreview" rows="4" readonly></textarea>
+    <p id="smsMeta" class="muted" style="font-size:.8rem"></p>
+    <div class="grid2">
+      <button class="btn primary" id="textSelected" type="button">Text selected</button>
+      <button class="btn" id="copySms" type="button">Copy message</button>
+    </div>
+  </div>
+</section>
+
+<section id="screen-check" class="card" hidden>
+  <button class="back" data-back type="button">← Today</button>
+  <h2>Already contacted?</h2>
+  <p class="muted">Search a name. You only see whether someone in the family already reached them, shown as a first name and initial.</p>
+  <div class="grid2" style="margin-top:10px">
+    <input id="checkQuery" maxlength="80" placeholder="Name">
+    <button class="btn primary" id="checkBtn" type="button">Search</button>
+  </div>
+  <div id="checkResult"></div>
+  <div class="feed">
+    <p class="eyebrow">TODAY</p>
+    <div id="familyFeed"></div>
+  </div>
+  <p id="activitySync" class="muted" style="font-size:.8rem">Connecting…</p>
+</section>
+
+<section id="screen-reports" class="card" hidden>
+  <button class="back" data-back type="button">← Today</button>
+  <p class="eyebrow">RANK</p>
   <h2>Ranking history</h2>
-  <p class="muted">Reports start with the Top-20 round. Older eliminated contestants are ignored, and the 20 finalists are identified by their unique profile links.</p>
-  <div class="actions"><button class="btn primary big" id="openMovementReport" type="button">Open reports</button><button class="btn" id="refreshMovement" type="button">Refresh</button><button class="btn" id="downloadRankingSheet" type="button">Download spreadsheet</button></div>
-  <div id="movementReport" hidden>
-    <div class="report-kpis">
-      <div class="report-kpi"><strong id="reportAlycia">—</strong><span>Alycia latest rank</span></div>
-      <div class="report-kpi"><strong id="reportBiggest">—</strong><span>Largest one-snapshot rise</span></div>
-      <div class="report-kpi"><strong id="reportSnapshots">0</strong><span>Snapshots saved</span></div>
-    </div>
-    <p id="reportStatus" class="muted">Loading reports…</p>
+  <div class="grid3">
+    <div class="stat"><strong id="reportAlycia">—</strong><span>Alycia latest</span></div>
+    <div class="stat"><strong id="reportBiggest">—</strong><span>Largest jump</span></div>
+    <div class="stat"><strong id="reportSnapshots">0</strong><span>Snapshots</span></div>
+  </div>
+  <p id="reportStatus" class="muted">Loading reports…</p>
+  <div class="seg">
+    <button class="btn primary" id="currentRankTab" type="button">Current rank</button>
+    <button class="btn" id="biggestMovementTab" type="button">Biggest movement</button>
+  </div>
+  <div id="currentRankReport">
+    <div class="report-wrap"><table class="report-table"><thead><tr><th>Child</th><th>Start</th><th>Previous</th><th>Current</th><th>Total</th></tr></thead><tbody id="currentRankRows"></tbody></table></div>
+  </div>
+  <div id="biggestMovementReport" hidden>
+    <div class="report-wrap"><table class="report-table"><thead><tr><th>Child</th><th>From</th><th>To</th><th>Jump</th><th>When</th><th>Now</th><th>Total</th></tr></thead><tbody id="biggestMovementRows"></tbody></table></div>
+  </div>
+  <button class="btn" id="downloadRankingSheet" type="button" style="margin-top:12px">Download spreadsheet</button>
+</section>
 
-    <div class="actions" style="margin-top:14px">
-      <button class="btn primary report-tab" id="currentRankTab" type="button">Current rank</button>
-      <button class="btn report-tab" id="biggestMovementTab" type="button">Biggest movement</button>
-      
-    </div>
+<section id="screen-vote" class="card" hidden>
+  <button class="back" data-back type="button">← Today</button>
+  <h2>Vote for Alycia</h2>
+  <p class="muted">This opens the official Super Kid page.</p>
+  <p><a class="btn success big" id="openVote" href="https://thesuperkid.org/2026/alycia-5613" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;text-decoration:none">Open voting page</a></p>
+  <p style="text-align:center"><img alt="QR code for Alycia's voting page" width="220" height="220" src="https://quickchart.io/qr?text=https%3A%2F%2Fthesuperkid.org%2F2026%2Falycia-5613&size=220"></p>
+</section>
 
-    <div id="currentRankReport">
-      <h3 style="margin-top:18px">Current rank</h3>
-      <p class="muted" style="font-size:.82rem">Sorted by latest rank. Starting point is the Top-20 reset on September 25. Previous is the immediately preceding saved snapshot.</p>
-      <div class="report-wrap"><table class="report-table">
-        <thead><tr><th>Child</th><th>Starting point</th><th>Previous</th><th>Current</th><th>Total movement</th></tr></thead>
-        <tbody id="currentRankRows"></tbody>
-      </table></div>
-    </div>
-
-    <div id="biggestMovementReport" hidden>
-      <h3 style="margin-top:18px">Largest one-snapshot jumps</h3>
-      <p class="muted" style="font-size:.82rem">Shows the biggest rise each child made between two consecutive saved snapshots. This is the most useful view for spotting sudden voting bursts.</p>
-      <div class="report-wrap"><table class="report-table">
-        <thead><tr><th>Child</th><th>From</th><th>To</th><th>Jump</th><th>When</th><th>Current</th><th>Total movement</th></tr></thead>
-        <tbody id="biggestMovementRows"></tbody>
-      </table></div>
-    </div>
-
-      </div></section><details class="card section-anchor" id="manualRankDetails" hidden><summary>Manual rank checks</summary><div style="margin-top:14px"><p class="muted">Automatic snapshots now run hourly. Use manual rank checks only as a fallback if an automatic capture fails.</p><h2>Has someone already checked?</h2>  <p class="muted">Open Alycia's official page first, then come back and record the rank you saw.</p>  <div class="form two"><label>Your name / initials<input id="checker" maxlength="50" placeholder="e.g. Marie"></label><button class="btn" id="refresh" type="button">Refresh</button></div>  <p class="note">Automatic captures are scheduled every hour at approximately 7 minutes past the hour. The exact saved time is recorded with every snapshot.</p>  <div id="schedule" class="list"></div>  <details style="margin-top:13px"><summary><strong>Recent rank history</strong></summary><div id="history" class="history"></div></details>  <p id="sync" class="muted" style="font-size:.8rem">Connecting…</p></div></details><footer class="muted" style="text-align:center;font-size:.8rem">Alycia Vote Helper · family coordination only</footer></main><div class="toast" id="toast"></div><script>const VOTE='https://thesuperkid.org/2026/alycia-5613';const SUPA='https://dbqrenlvinqheyjppxby.supabase.co';const KEY='sb_publishable__twdY8fk0pZo7dU-BNDwWg_0-JQ1BjJ';const TIMES=['09:00','12:00','15:00','18:00','21:00'];const $=id=>document.getElementById(id);const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const today=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/Toronto',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());const min=t=>{let[a,b]=t.split(':').map(Number);return a*60+b};const fmt=t=>new Date(2000,0,1,...t.split(':').map(Number)).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});const nowMin=()=>{let p=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Toronto',hour:'2-digit',minute:'2-digit',hour12:false}).formatToParts(new Date()).reduce((a,x)=>(a[x.type]=x.value,a),{});return +p.hour*60 + +p.minute};const headers=()=>({'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json'});function toast(m){$('toast').textContent=m;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),1800)}async function copy(t){try{await navigator.clipboard.writeText(t);toast('Copied')}catch{prompt('Copy this:',t)}}async function share(text,url=''){if(navigator.share){try{await navigator.share({title:'Vote for Alycia',text,url});return true}catch{return false}}else{await copy((text+' '+url).trim());return true}}
-async function trackSharedVotingLink(){
-  const shared=await share('Please give Alycia your free daily Super Kid vote!',VOTE);
-  if(!shared)return;
-  const who=getWho();
-  if(!who)return;
-  const person=(prompt('Who did you share it with? Leave blank if you do not need to track the person.','')||'').trim();
-  if(!person){toast('Voting link shared');return}
-  const exists=activities.some(a=>normalizeName(a.person_label)===normalizeName(person));
-  if(exists){toast('Shared — person is already in contacted list');return}
-  const r=await fetch(`${SUPA}/rest/v1/alycia_activity`,{method:'POST',headers:{...headers(),'Prefer':'return=representation'},body:JSON.stringify({person_label:person,added_by:who,method:'Share',status:'link_shared',confirmed_votes:0,last_vote_date:null})});
-  if(!r.ok){toast('Shared, but contact could not be saved');return}
-  await loadShared();
-  toast('Shared and added to contacted list');
-}let activities=[], checks=[], voteEvents=[], groupSnapshots=[];let myPeople=[];let syncedLocalPeople=false;
-const MY_PEOPLE_KEY='alycia.myPeople.v1';
-const MESSAGE_PRESETS={
-  daily:'Hi! If you have a moment today, could you give Alycia your free Super Kid vote? It only takes a minute: '+VOTE+' Thank you! ⭐',
-  report:'Hi! We are tracking Alycia’s group ranking hourly. You can vote and see the latest progress here: https://adedou2004-netizen.github.io/alycia-vote-helper/ Thank you for helping Alycia! ⭐'
-};
-function normalizePhone(p){return String(p||'').replace(/[^+\d]/g,'')}
-function loadMyPeople(){try{myPeople=JSON.parse(localStorage.getItem(MY_PEOPLE_KEY)||'[]');if(!Array.isArray(myPeople))myPeople=[]}catch{myPeople=[]}dedupeMyPeople();localStorage.setItem(MY_PEOPLE_KEY,JSON.stringify(myPeople));renderMyPeople()}
-function dedupeMyPeople(){
-  const byName=new Map(), byPhone=new Map(), out=[];
-  for(const p of myPeople){
-    const name=String(p.name||'').trim();
-    const phone=String(p.phone||'').trim();
-    const nk=normalizeName(name);
-    const pk=normalizePhone(phone);
-    let existing=(pk&&byPhone.get(pk))||(nk&&byName.get(nk));
-    if(existing){
-      if(!existing.phone&&phone)existing.phone=phone;
-      if(!existing.name&&name)existing.name=name;
-      existing.selected=existing.selected||p.selected;
-      if(pk)byPhone.set(pk,existing);
-      if(nk)byName.set(nk,existing);
-      continue;
-    }
-    const item={...p,name,phone};
-    out.push(item);
-    if(pk)byPhone.set(pk,item);
-    if(nk)byName.set(nk,item);
-  }
-  myPeople=out;
+<section id="screen-share" class="card" hidden>
+  <button class="back" data-back type="button">← Today</button>
+  <h2>Share the voting link</h2>
+  <button class="btn primary big" id="copyVote" type="button">Copy voting link</button>
+  <h2 style="margin-top:18px">Who did you share with?</h2>
+  <p class="muted">First name is enough. The family list stores a short label, not a phone number.</p>
+  <input id="shareName" maxlength="80" placeholder="First name" style="margin-top:8px">
+  <div class="seg">
+    <button class="btn primary" id="shareDaily" type="button">Daily list</button>
+    <button class="btn" id="shareOcc" type="button">Occasional list</button>
+  </div>
+  <button class="btn success big" id="saveShare" type="button" style="margin-top:10px">Save first name only</button>
+</section>
+<p id="todayTop20" hidden></p>
+</main>
+<div class="toast" id="toast"></div>
+<script>
+const VOTE='https://thesuperkid.org/2026/alycia-5613';
+const SUPA='https://dbqrenlvinqheyjppxby.supabase.co';
+const KEY='sb_publishable__twdY8fk0pZo7dU-BNDwWg_0-JQ1BjJ';
+const PEOPLE_KEY='alycia.myPeople.v2';
+const OLD_KEY='alycia.myPeople.v1';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&','<':'<','>':'>','"':'"',"'":'&#39;'}[c]));
+const headers=()=>({'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json','Prefer':'return=minimal'});
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000)}
+function todayKey(){return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Toronto',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())}
+function normalizeName(s){return String(s||'').trim().toLowerCase().replace(/[^a-z0-9]+/g,' ').replace(/\s+/g,' ').trim()}
+function normalizePhone(p){return String(p||'').replace(/[^\d+]/g,'')}
+function firstName(s){return String(s||'').trim().split(/\s+/)[0]||'there'}
+function publicLabel(raw){
+  const s=String(raw||'').trim();
+  if(!s)return 'Someone';
+  if(/\d{3,}/.test(s))return 'Name on file';
+  const parts=s.split(/\s+/);
+  if(parts.length===1)return parts[0];
+  const last=parts[parts.length-1].replace(/\./g,'');
+  return parts[0]+' '+(last[0]||'').toUpperCase()+'.';
 }
-function saveMyPeople(){dedupeMyPeople();localStorage.setItem(MY_PEOPLE_KEY,JSON.stringify(myPeople));renderMyPeople()}
-function personKey(p){const phone=normalizePhone(p.phone);return phone||('name:'+normalizeName(p.name))}
-function addMyPerson(name,phone=''){
-  name=String(name||'').trim();phone=String(phone||'').trim();
-  if(!name&&!phone)return false;
-  if(!name)name=phone;
-  const nk=normalizeName(name), pk=normalizePhone(phone);
-  const existing=myPeople.find(x=>(pk&&normalizePhone(x.phone)===pk)||(nk&&normalizeName(x.name)===nk));
-  if(existing){
-    let changed=false;
-    if(phone&&normalizePhone(existing.phone)!==pk){existing.phone=phone;changed=true}
-    if(name&&!existing.name){existing.name=name;changed=true}
-    existing.selected=true;
-    dedupeMyPeople();
-    return changed;
-  }
-  myPeople.push({id:crypto.randomUUID?crypto.randomUUID():Date.now()+'-'+Math.random(),name,phone,selected:true});
-  dedupeMyPeople();
+let activities=[];
+let groupSnapshots=[];
+let myPeople=[];
+let listTab='daily';
+let shareList='daily';
+let smsIndex=new Date().getDate()%3;
+
+function loadPeople(){
+  try{
+    const raw=localStorage.getItem(PEOPLE_KEY)||localStorage.getItem(OLD_KEY);
+    myPeople=raw?JSON.parse(raw):[];
+    if(!Array.isArray(myPeople))myPeople=[];
+  }catch{myPeople=[]}
+  myPeople=myPeople.map(p=>({
+    id:p.id||crypto.randomUUID(),
+    name:String(p.name||'').trim(),
+    phone:String(p.phone||'').trim(),
+    list:p.list==='occasional'?'occasional':'daily',
+    lastTexted:p.lastTexted||null,
+    lastTemplate:Number.isInteger(p.lastTemplate)?p.lastTemplate:null,
+    selected:false
+  })).filter(p=>p.name||p.phone);
+  savePeople();
+}
+function savePeople(){localStorage.setItem(PEOPLE_KEY,JSON.stringify(myPeople.map(({selected,...p})=>p)))}
+function isDue(p){
+  if(!p.lastTexted)return true;
+  if(p.list==='daily')return p.lastTexted!==todayKey();
+  const then=new Date(p.lastTexted+'T12:00:00');
+  return (Date.now()-then.getTime())>=3*86400000;
+}
+function rankPhrase(){
+  const t=$('todayRank')?.textContent||'';
+  return t&&t!=='—'?t:'in the Top 20';
+}
+function templateFor(person){
+  const name=firstName(person?.name||'there');
+  const rank=rankPhrase();
+  const bank=[
+    `Hi ${name} — Alycia is ${rank} today. One free vote helps: ${VOTE} Thanks!`,
+    `Hey ${name}, if you have a minute, please vote for Alycia: ${VOTE}`,
+    `${name}, Alycia is ${rank}. A free Super Kid vote still counts: ${VOTE} Thank you!`
+  ];
+  let i=smsIndex;
+  if(person&&person.lastTemplate===i)i=(i+1)%bank.length;
+  return {i,text:bank[i]};
+}
+function previewMessage(){
+  const due=myPeople.filter(p=>p.list===listTab&&p.selected&&isDue(p));
+  const sample=due[0]||myPeople.find(p=>p.list===listTab&&isDue(p))||{name:'friend'};
+  return templateFor(sample).text;
+}
+function show(screen){
+  ['home','lists','check','reports','vote','share'].forEach(s=>{
+    $('screen-'+s).hidden=s!==screen;
+  });
+  if(screen==='lists')renderPeople();
+  if(screen==='reports'){ $('screen-reports').hidden=false; loadMovementReport(); }
+  if(screen==='check')renderFeed();
+  window.scrollTo(0,0);
+}
+function renderHome(){
+  const daily=myPeople.filter(p=>p.list==='daily');
+  const due=daily.filter(isDue).length;
+  $('todayDue').textContent=due+'/'+daily.length;
+  const day=todayKey();
+  const fam=activities.filter(a=>String(a.created_at||'').slice(0,10)===day||String(a.updated_at||'').slice(0,10)===day);
+  $('todayFamily').textContent=String(fam.length);
+}
+function renderPeople(){
+  const rows=myPeople.filter(p=>p.list===listTab).sort((a,b)=>Number(isDue(b))-Number(isDue(a)));
+  $('tabDaily').classList.toggle('primary',listTab==='daily');
+  $('tabOcc').classList.toggle('primary',listTab==='occasional');
+  $('listHint').textContent=listTab==='daily'?'Remind often. Due every day until you text them.':'Remind less often. Due only if not texted in 3 days.';
+  $('peopleList').innerHTML=rows.map(p=>`<div class="row">
+    <input type="checkbox" data-id="${esc(p.id)}" ${p.selected?'checked':''} aria-label="Select ${esc(p.name)}">
+    <div class="grow"><strong>${esc(p.name||p.phone)}</strong><div class="muted" style="font-size:.78rem">${isDue(p)?'Due':'Texted '+esc(p.lastTexted)}</div></div>
+    <span class="pill ${isDue(p)?'due':'done'}">${isDue(p)?'due':'done'}</span>
+    <button class="btn" type="button" data-move="${esc(p.id)}" style="min-height:38px">${p.list==='daily'?'Less often':'Daily'}</button>
+  </div>`).join('')||'<p class="muted">No one on this list yet.</p>';
+  const msg=previewMessage();
+  $('smsPreview').value=msg;
+  const parts=Math.max(1,Math.ceil(msg.length/160));
+  $('smsMeta').textContent=msg.length+' characters · '+parts+' SMS · about 15 seconds to read';
+  const n=rows.filter(p=>p.selected&&isDue(p)&&normalizePhone(p.phone)).length;
+  $('textSelected').textContent='Text selected ('+n+')';
+  renderHome();
+}
+async function loadShared(){
+  $('activitySync').textContent='Syncing…';
+  try{
+    const r=await fetch(`${SUPA}/rest/v1/alycia_activity?select=id,person_label,added_by,method,status,created_at,updated_at&order=created_at.desc&limit=400`,{headers:headers()});
+    if(!r.ok)throw Error('activity '+r.status);
+    activities=await r.json();
+    $('activitySync').textContent='Family check is up to date';
+    renderHome();renderFeed();
+  }catch(e){console.error(e);$('activitySync').textContent='Could not sync family check'}
+}
+function renderFeed(){
+  const day=todayKey();
+  const rows=activities.filter(a=>String(a.created_at||a.updated_at||'').slice(0,10)===day).slice(0,12);
+  $('familyFeed').innerHTML=rows.length?rows.map(a=>`<div><span>${esc(publicLabel(a.person_label))}</span><span class="muted">${esc(a.added_by||'')} · ${esc(a.method||'')}</span></div>`).join(''):'<p class="muted">No family check-ins yet today.</p>';
+}
+function findHit(q){
+  const n=normalizeName(q);
+  if(!n)return null;
+  return activities.find(a=>normalizeName(a.person_label)===n||normalizeName(publicLabel(a.person_label))===n)||null;
+}
+async function markContacted(name,method){
+  const who=$('who').value.trim();
+  if(!who){toast('Enter your name first');return false}
+  const label=publicLabel(name);
+  const exists=activities.some(a=>normalizeName(a.person_label)===normalizeName(label)||normalizeName(a.person_label)===normalizeName(name));
+  if(exists)return true;
+  const r=await fetch(`${SUPA}/rest/v1/alycia_activity`,{method:'POST',headers:headers(),body:JSON.stringify({person_label:label,added_by:who,method,status:'link_shared',confirmed_votes:0,last_vote_date:null})});
+  if(!r.ok){toast('Could not save the family check');return false}
+  await loadShared();
   return true;
 }
-function renderMyPeople(){const box=$('myPeopleList');if(!box)return;$('myPeopleCount').textContent=myPeople.length+' '+(myPeople.length===1?'person':'people');if($('myPeopleFoldCount'))$('myPeopleFoldCount').textContent=myPeople.length;const sortedPeople=[...myPeople].sort((a,b)=>String(a.name||a.phone||'').localeCompare(String(b.name||b.phone||''),undefined,{sensitivity:'base'}));box.innerHTML=sortedPeople.length?sortedPeople.map(p=>`<div class="person-item"><input type="checkbox" class="person-check" data-id="${esc(p.id)}" ${p.selected?'checked':''}><div class="person-main"><div class="person-name">${esc(p.name||p.phone)}</div><div class="person-phone">${p.phone?esc(p.phone):'No phone number saved yet'}</div></div><div class="person-actions"><button class="btn tiny one-text" type="button" data-id="${esc(p.id)}">Text</button><button class="btn tiny remove-person" type="button" data-id="${esc(p.id)}">Remove</button></div></div>`).join(''):'<p class="muted">Your personal list is empty. Pick contacts or load the people you already contacted.</p>'}
-function currentMyMessage(){return $('myPeopleMessage').value.trim()}
-function smsHref(numbers,message){const clean=numbers.map(normalizePhone).filter(Boolean);return 'sms:'+clean.join(',')+'?body='+encodeURIComponent(message)}
-async function markNamesContacted(people){const who=getWho();if(!who)return;for(const p of people){const name=String(p.name||'').trim();if(!name)continue;const exists=activities.some(a=>normalizeName(a.person_label)===normalizeName(name));if(exists)continue;try{await fetch(`${SUPA}/rest/v1/alycia_activity`,{method:'POST',headers:{...headers(),'Prefer':'return=minimal'},body:JSON.stringify({person_label:name,added_by:who,method:'Text',status:'link_shared',confirmed_votes:0,last_vote_date:null})})}catch(e){console.warn('Could not mark contacted',name,e)}}loadShared()}
-async function textPeople(people){const withPhone=people.filter(p=>normalizePhone(p.phone));if(!withPhone.length)return toast('No phone numbers are saved for the selected people');await markNamesContacted(withPhone);const href=smsHref(withPhone.map(p=>p.phone),currentMyMessage());window.location.href=href}
-$('activityWho').value=localStorage.getItem('alycia.activityWho')||localStorage.getItem('alycia.checker')||'';$('checker').value=localStorage.getItem('alycia.checker')||localStorage.getItem('alycia.activityWho')||'';function saveWho(who){localStorage.setItem('alycia.activityWho',who);localStorage.setItem('alycia.checker',who);$('activityWho').value=who;$('checker').value=who}function getWho(){let who=$('activityWho').value.trim()||$('checker').value.trim();if(!who){who=(prompt('Your first name or initials:','')||'').trim()}if(who)saveWho(who);return who}function eventTotalForActivity(id){return 0}function normalizeName(n){return String(n||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim().replace(/\s+/g,' ')}function hasRealContactName(a){const n=normalizeName(a?.person_label);return !!n&&!['unknown','walk up','walkup','anonymous','unnamed'].includes(n)}function renderShared(){const namedRaw=activities.filter(hasRealContactName);const seenNames=new Set();const namedActivities=namedRaw.filter(a=>{const k=normalizeName(a.person_label);if(seenNames.has(k))return false;seenNames.add(k);return true});if($('todayContacted'))$('todayContacted').textContent=namedActivities.length;if($('contactedFoldCount'))$('contactedFoldCount').textContent=namedActivities.length;const contactNames=$('contactNames');if(contactNames)contactNames.innerHTML=namedActivities.map(a=>`<option value="${esc(a.person_label)}"></option>`).join('');const sortedActivities=[...namedActivities].sort((a,b)=>String(a.person_label||'').localeCompare(String(b.person_label||''),undefined,{sensitivity:'base'}));$('contactList').innerHTML=sortedActivities.length?sortedActivities.map(a=>{const when=new Date(a.created_at).toLocaleString([],{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});return `<div class="row"><div><strong>${esc(a.person_label)}</strong><div class="meta">${esc(a.method)} · contacted by ${esc(a.added_by)} · ${esc(when)}</div></div></div>`}).join(''):'<p class="muted">Nobody has been added yet.</p>';}async function loadShared(show=false){$('activitySync').textContent='Syncing…';try{const ar=await fetch(`${SUPA}/rest/v1/alycia_activity?select=id,person_label,added_by,method,status,confirmed_votes,last_vote_date,created_at,updated_at&order=created_at.desc&limit=300`,{headers:headers()});if(!ar.ok)throw Error(`activity ${ar.status}`);activities=await ar.json();renderShared();if(!syncedLocalPeople&&myPeople.length){const savedWho=(localStorage.getItem('alycia.activityWho')||localStorage.getItem('alycia.checker')||'').trim();if(savedWho){syncedLocalPeople=true;await markNamesContacted(myPeople.filter(p=>String(p.name||'').trim()));}}    $('activitySync').textContent='Shared activity is up to date'; if(show)toast('Activity refreshed');  }catch(e){console.error(e);$('activitySync').textContent='Could not sync shared activity'}}$('voteAlycia').onclick=()=>window.open(VOTE,'_blank','noopener');$('shareVote').onclick=()=>trackSharedVotingLink();$('saveQuickContact').onclick=async()=>{const who=getWho();if(!who)return toast('Enter your name or initials first');const person=$('quickContactName').value.trim();if(!person)return toast('Enter a name only if you want to track this person');const exists=activities.some(a=>normalizeName(a.person_label)===normalizeName(person));if(exists)return toast('That person is already in the contacted list');const r=await fetch(`${SUPA}/rest/v1/alycia_activity`,{method:'POST',headers:{...headers(),'Prefer':'return=representation'},body:JSON.stringify({person_label:person,added_by:who,method:'QR',status:'link_shared',confirmed_votes:0,last_vote_date:null})});if(!r.ok)return toast('Could not save contact');await loadShared();$('quickContactName').value='';toast('QR contact saved')};async function loadRanks(show=false){  $('sync').textContent='Syncing…';  try{    const r=await fetch(`${SUPA}/rest/v1/alycia_rank_checks?select=id,slot_date,slot_time,rank,checked_by,checked_at&order=slot_date.desc,slot_time.desc&limit=200`,{headers:headers()});    if(!r.ok)throw Error(r.status); checks=await r.json(); renderRank(); renderShared(); $('sync').textContent='Shared checks are up to date'; if(show)toast('Refreshed');  }catch(e){console.error(e);$('sync').textContent='Could not sync shared checks'}}function renderRank(){  const d=today(),m=nowMin(),by=new Map(checks.filter(x=>x.slot_date===d).map(x=>[String(x.slot_time).slice(0,5),x]));  $('schedule').innerHTML=TIMES.map(t=>{const c=by.get(t),due=m>=min(t);return c?`<div class="rank-slot done"><div><strong>${fmt(t)}</strong><div class="status">✓ Checked by ${esc(c.checked_by)}</div></div><div class="badge">#${esc(c.rank)}</div></div>`:`<div class="rank-slot ${due?'due':''}"><div><strong>${fmt(t)}</strong><div class="status">${due?'Needs checking':'Not due yet'}</div></div><div class="actions"><a class="btn tiny" href="${VOTE}" target="_blank" rel="noopener">Open Alycia page</a><button class="btn tiny ${due?'primary':''} record-rank" data-time="${t}">Record rank</button></div></div>`}).join('');  $('history').innerHTML=checks.length?checks.slice(0,20).map(c=>`<div><span>${esc(new Date(c.checked_at).toLocaleString([],{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}))} · ${esc(c.checked_by)}</span><strong>#${esc(c.rank)}</strong></div>`).join(''):'<p class="muted">No shared checks yet.</p>';}$('schedule').onclick=async e=>{  const b=e.target.closest('.record-rank'); if(!b)return; const who=getWho(); if(!who)return toast('Enter your name or initials first');  const v=prompt(`What rank did you see for Alycia? (${fmt(b.dataset.time)} check)`,''); if(v===null)return; const rank=Number(v); if(!Number.isInteger(rank)||rank<1||rank>999)return toast('Enter a valid rank');  const r=await fetch(`${SUPA}/rest/v1/alycia_rank_checks`,{method:'POST',headers:{...headers(),'Prefer':'return=representation'},body:JSON.stringify({slot_date:today(),slot_time:b.dataset.time+':00',rank,checked_by:who})});  if(!r.ok)return toast(r.status===409?'Someone already checked that time':'Could not save'); await loadRanks(); toast('Rank saved');};async function loadMovementReport(showToast=false){const status=$('reportStatus');if(status)status.textContent='Loading reports…';try{const r=await fetch(`${SUPA}/rest/v1/alycia_group_rank_snapshots?select=snapshot_date,captured_at,contestant_name,rank,profile_url&order=captured_at.desc,rank.asc&limit=5000`,{headers:headers()});if(!r.ok)throw Error(r.status);groupSnapshots=await r.json();renderMovementReport();if(showToast)toast('Movement reports refreshed')}catch(e){console.error(e);if(status)status.textContent='Could not load the movement reports'}}function captureLabel(t){return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Toronto',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}).format(new Date(t))}
+function getWho(){return $('who').value.trim()}
+
+async function loadMovementReport(showToast=false){const status=$('reportStatus');if(status)status.textContent='Loading reports…';try{const r=await fetch(`${SUPA}/rest/v1/alycia_group_rank_snapshots?select=snapshot_date,captured_at,contestant_name,rank,profile_url&order=captured_at.desc,rank.asc&limit=5000`,{headers:headers()});if(!r.ok)throw Error(r.status);groupSnapshots=await r.json();renderMovementReport();if(showToast)toast('Movement reports refreshed')}catch(e){console.error(e);if(status)status.textContent='Could not load the movement reports'}}function captureLabel(t){return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Toronto',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}).format(new Date(t))}
 const TOP20_RESET_AT='2026-09-25T20:55:28.083Z';
 const TOP20_PROFILES=new Set([
 'https://thesuperkid.org/2026/mason-da49','https://thesuperkid.org/2026/jameson-2b6a','https://thesuperkid.org/2026/hunter-2c40','https://thesuperkid.org/2026/kai-f690','https://thesuperkid.org/2026/alycia-5613','https://thesuperkid.org/2026/kirby-285a','https://thesuperkid.org/2026/alexander-99ec','https://thesuperkid.org/2026/tristan-5092','https://thesuperkid.org/2026/trey-c5ce','https://thesuperkid.org/2026/keelan-64d0','https://thesuperkid.org/2026/ismany-4bf6','https://thesuperkid.org/2026/le-39-princeton-c0b3','https://thesuperkid.org/2026/caden-3c42','https://thesuperkid.org/2026/maxwell-c549','https://thesuperkid.org/2026/tayvien-eb48','https://thesuperkid.org/2026/dreamma-553b','https://thesuperkid.org/2026/sarine-7379','https://thesuperkid.org/2026/emmit-084a','https://thesuperkid.org/2026/lilliana-457a','https://thesuperkid.org/2026/colton-47b4'
@@ -242,15 +383,111 @@ function renderMovementReport(){
 function csvCell(v){const s=String(v??'');return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s}
 function downloadRankingSpreadsheet(){const model=historyModel();if(!model.times.length)return toast('No snapshots to download yet');const rows=movementRows(model).sort((a,b)=>a.current-b.current);const headers=['Child',...model.times.map(t=>captureLabel(t))];const lines=[headers.map(csvCell).join(',')];rows.forEach(r=>{lines.push([r.label,...r.points.map(v=>v==null?'':v)].map(csvCell).join(','))});const blob=new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='alycia-ranking-history-'+new Date().toISOString().slice(0,10)+'.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('Spreadsheet downloaded')}
 function showReportTab(which){const ids={current:'currentRankReport',movement:'biggestMovementReport'},tabs={current:'currentRankTab',movement:'biggestMovementTab'};Object.keys(ids).forEach(k=>{$(ids[k]).hidden=k!==which;$(tabs[k]).classList.toggle('primary',k===which)})}
-$('downloadRankingSheet').onclick=downloadRankingSpreadsheet;$('currentRankTab').onclick=()=>showReportTab('current');$('biggestMovementTab').onclick=()=>showReportTab('movement');
-$('goPeople').onclick=()=>$('myPeopleCard').scrollIntoView({behavior:'smooth',block:'start'});$('goMore').onclick=()=>{const d=$('familyActivityDetails');d.open=true;d.scrollIntoView({behavior:'smooth',block:'start'})};$('jumpReports').onclick=()=>{const box=$('movementReport');box.hidden=false;showReportTab('current');$('rankReports').scrollIntoView({behavior:'smooth',block:'start'});loadMovementReport()};$('openMovementReport').onclick=()=>{const box=$('movementReport');box.hidden=!box.hidden;if(!box.hidden){showReportTab('current');loadMovementReport()}};$('refreshMovement').onclick=()=>{if($('movementReport').hidden)$('movementReport').hidden=false;loadMovementReport(true)};
-$('messagePreset').onchange=()=>{const v=$('messagePreset').value;if(v!=='custom')$('myPeopleMessage').value=MESSAGE_PRESETS[v]||''};
-$('copySelectedMessage').onclick=()=>copy(currentMyMessage());
-$('toggleAllPeople').onclick=()=>{const allSelected=myPeople.length&&myPeople.every(p=>p.selected);myPeople.forEach(p=>p.selected=!allSelected);saveMyPeople()};
-$('myPeopleList').onchange=e=>{const c=e.target.closest('.person-check');if(!c)return;const p=myPeople.find(x=>String(x.id)===String(c.dataset.id));if(p){p.selected=c.checked;localStorage.setItem(MY_PEOPLE_KEY,JSON.stringify(myPeople));$('myPeopleCount').textContent=myPeople.length+' '+(myPeople.length===1?'person':'people')}};
-$('myPeopleList').onclick=e=>{const rm=e.target.closest('.remove-person');if(rm){myPeople=myPeople.filter(x=>String(x.id)!==String(rm.dataset.id));saveMyPeople();return}const one=e.target.closest('.one-text');if(one){const p=myPeople.find(x=>String(x.id)===String(one.dataset.id));if(p)textPeople([p])}};
-$('textSelected').onclick=()=>{const selected=myPeople.filter(p=>p.selected);if(!selected.length)return toast('Select at least one person');textPeople(selected)};
 
-$('loadMine').onclick=()=>{const who=getWho();if(!who)return toast('Enter your name or initials first');const mine=activities.filter(a=>String(a.added_by||'').trim().toLowerCase()===who.toLowerCase());let added=0;mine.forEach(a=>{if(addMyPerson(a.person_label,''))added++});saveMyPeople();toast(added?added+' added to My people':'Your contacted people are already in My people')};
-$('pickContacts').onclick=async()=>{if(!('contacts' in navigator)||!navigator.contacts?.select){$('contactPickerNote').textContent='Your browser does not support direct contact picking. Use Load people I contacted instead.';return toast('Contact picker is not supported on this browser')}try{const supported=await navigator.contacts.getProperties();const props=['name','tel'].filter(x=>supported.includes(x));const contacts=await navigator.contacts.select(props,{multiple:true});let added=0;const picked=[];for(const c of contacts){const name=(Array.isArray(c.name)?c.name[0]:c.name)||'';const tel=(Array.isArray(c.tel)?c.tel[0]:c.tel)||'';if(addMyPerson(name||tel,tel))added++;if(String(name).trim())picked.push({name:String(name).trim(),phone:tel})}saveMyPeople();if(picked.length)await markNamesContacted(picked);toast(added?added+' contacts added':'No new contacts added')}catch(e){if(e?.name!=='AbortError'){console.error(e);toast('Could not open contacts')}}};
-$('activityWho').onchange=()=>saveWho($('activityWho').value.trim());$('checker').onchange=()=>saveWho($('checker').value.trim());$('activityRefresh').onclick=()=>{loadShared(true);loadRanks()};$('refresh').onclick=()=>loadRanks(true);$('contactedDetails').open=false;$('myPeopleDetails').open=false;$('familyActivityDetails').open=false;$('manualRankDetails').open=false;loadMyPeople();loadShared();loadRanks();loadMovementReport();setInterval(()=>{loadShared()},3000);setInterval(()=>{loadRanks()},20000);</script></body></html>
+function paintDelta(){
+  try{
+    const model=historyModel();
+    const aly=model.series.find(s=>s.id===VOTE);
+    if(!aly||!aly.points.length){$('todayDelta').textContent='—';return}
+    const cur=aly.points[aly.points.length-1];
+    const prev=aly.points.length>1?aly.points[aly.points.length-2]:null;
+    if(prev==null){$('todayDelta').textContent='—';return}
+    const d=prev-cur;
+    $('todayDelta').textContent=d>0?'↑ '+d:d<0?'↓ '+Math.abs(d):'Same';
+    $('todayDelta').style.color=d>0?'var(--green)':d<0?'#a53b3b':'';
+  }catch(e){console.error(e)}
+}
+const _renderMovementReport=renderMovementReport;
+renderMovementReport=function(){_renderMovementReport();paintDelta();renderHome()};
+
+$('who').value=localStorage.getItem('alycia.activityWho')||'';
+$('who').onchange=()=>localStorage.setItem('alycia.activityWho',$('who').value.trim());
+document.querySelectorAll('[data-back]').forEach(b=>b.onclick=()=>show('home'));
+$('goLists').onclick=()=>show('lists');
+$('goCheck').onclick=()=>show('check');
+$('goReports').onclick=()=>show('reports');
+$('goVote').onclick=()=>show('vote');
+$('goShare').onclick=()=>show('share');
+$('tabDaily').onclick=()=>{listTab='daily';renderPeople()};
+$('tabOcc').onclick=()=>{listTab='occasional';renderPeople()};
+$('addNameBtn').onclick=()=>{$('addBox').hidden=!$('addBox').hidden};
+$('saveAdd').onclick=()=>{
+  const name=$('addName').value.trim();
+  const phone=$('addPhone').value.trim();
+  if(!name&&!phone)return toast('Enter a name');
+  myPeople.unshift({id:crypto.randomUUID(),name:name||phone,phone,list:listTab,lastTexted:null,lastTemplate:null,selected:false});
+  savePeople();$('addName').value='';$('addPhone').value='';$('addBox').hidden=true;renderPeople();toast('Saved on this phone');
+};
+$('peopleList').onclick=e=>{
+  const box=e.target.closest('input[type=checkbox]');
+  if(box){const p=myPeople.find(x=>x.id===box.dataset.id);if(p){p.selected=box.checked;renderPeople()}}
+  const mv=e.target.closest('[data-move]');
+  if(mv){const p=myPeople.find(x=>x.id===mv.dataset.move);if(p){p.list=p.list==='daily'?'occasional':'daily';savePeople();renderPeople()}}
+};
+$('copySms').onclick=async()=>{try{await navigator.clipboard.writeText($('smsPreview').value);toast('Copied')}catch{toast('Could not copy')}};
+$('copyVote').onclick=async()=>{try{await navigator.clipboard.writeText(VOTE);toast('Voting link copied')}catch{toast('Could not copy')}};
+$('shareDaily').onclick=()=>{shareList='daily';$('shareDaily').classList.add('primary');$('shareOcc').classList.remove('primary')};
+$('shareOcc').onclick=()=>{shareList='occasional';$('shareOcc').classList.add('primary');$('shareDaily').classList.remove('primary')};
+$('saveShare').onclick=async()=>{
+  const name=$('shareName').value.trim();
+  if(!name)return toast('Enter a first name, or go back');
+  myPeople.unshift({id:crypto.randomUUID(),name,phone:'',list:shareList,lastTexted:todayKey(),lastTemplate:null,selected:false});
+  savePeople();
+  const ok=await markContacted(name,'Share');
+  if(!ok)return;
+  $('shareName').value='';
+  show('home');
+  toast(publicLabel(name)+' marked contacted');
+};
+$('checkBtn').onclick=()=>{
+  const q=$('checkQuery').value.trim();
+  const hit=findHit(q);
+  const box=$('checkResult');
+  if(!q){box.innerHTML='';return}
+  if(hit){
+    box.innerHTML=`<div class="hit"><strong>Yes — already contacted</strong><p>Shown as ${esc(publicLabel(hit.person_label))}</p><p>Last touch: ${esc(hit.added_by||'family')} · ${esc(hit.method||'note')}</p><p><strong>Do not text them again today.</strong></p></div>`;
+  }else{
+    box.innerHTML=`<div class="miss"><strong>No match yet</strong><p class="muted">Safe to reach them. Their phone stays on your own list.</p></div>`;
+  }
+};
+$('textSelected').onclick=async()=>{
+  const selected=myPeople.filter(p=>p.list===listTab&&p.selected&&isDue(p));
+  const withPhone=selected.filter(p=>normalizePhone(p.phone));
+  if(!withPhone.length)return toast('Select someone due who has a phone number');
+  const msg=templateFor(withPhone[0]);
+  for(const p of withPhone){
+    p.lastTexted=todayKey();
+    p.lastTemplate=msg.i;
+    p.selected=false;
+    await markContacted(p.name||publicLabel(p.phone),'SMS');
+  }
+  savePeople();renderPeople();
+  const body=encodeURIComponent(msg.text);
+  const nums=withPhone.map(p=>normalizePhone(p.phone)).join(',');
+  window.location.href='sms:'+nums+'?&body='+body;
+};
+$('pickContacts').onclick=async()=>{
+  if(!navigator.contacts?.select){$('contactPickerNote').textContent='This browser cannot open the contact picker. Use Add name.';return toast('Contact picker is not supported here')}
+  try{
+    const supported=await navigator.contacts.getProperties();
+    const props=['name','tel'].filter(x=>supported.includes(x));
+    const contacts=await navigator.contacts.select(props,{multiple:true});
+    let added=0;
+    for(const c of contacts){
+      const name=(Array.isArray(c.name)?c.name[0]:c.name)||'';
+      const tel=(Array.isArray(c.tel)?c.tel[0]:c.tel)||'';
+      if(!name&&!tel)continue;
+      myPeople.unshift({id:crypto.randomUUID(),name:String(name||tel).trim(),phone:String(tel||'').trim(),list:listTab,lastTexted:null,lastTemplate:null,selected:false});
+      added++;
+    }
+    savePeople();renderPeople();toast(added?added+' added on this phone':'No new contacts');
+  }catch(e){if(e?.name!=='AbortError')toast('Could not open contacts')}
+};
+$('downloadRankingSheet').onclick=downloadRankingSpreadsheet;
+$('currentRankTab').onclick=()=>showReportTab('current');
+$('biggestMovementTab').onclick=()=>showReportTab('movement');
+loadPeople();renderPeople();loadShared();loadMovementReport();
+setInterval(loadShared,20000);
+</script>
+</body>
+</html>
