@@ -411,7 +411,7 @@ document.querySelectorAll('[data-back]').forEach(b=>b.onclick=()=>show('home'));
 $('goLists').onclick=()=>show('lists');
 $('goCheck').onclick=()=>show('check');
 $('goReports').onclick=()=>show('reports');
-$('goVote').onclick=()=>show('vote');
+$('goVote').onclick=()=>window.open(VOTE,'_blank','noopener');
 $('goShare').onclick=()=>show('share');
 $('tabDaily').onclick=()=>{listTab='daily';renderPeople()};
 $('tabOcc').onclick=()=>{listTab='occasional';renderPeople()};
