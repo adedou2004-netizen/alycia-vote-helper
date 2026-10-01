@@ -157,6 +157,16 @@ details.card>summary::-webkit-details-marker{display:none}
     <button class="btn" id="copySelectedMessage" type="button">Copy message</button>
     <button class="btn" id="markSelected" type="button">Mark contacted</button>
   </div>
+  <p class="muted">Private texts open separately in Messages. Press Send there, then confirm here. Opening a draft does not mark anyone contacted.</p>
+  <div id="privateTextQueue" class="row" hidden>
+    <p id="privateTextStatus" class="muted"></p>
+    <div class="actions">
+      <button class="btn primary" id="openPrivateText" type="button">Open next text</button>
+      <button class="btn success" id="confirmPrivateText" type="button" hidden>I sent this text</button>
+      <button class="btn" id="skipPrivateText" type="button">Skip this person</button>
+      <button class="btn" id="cancelPrivateTexts" type="button">Cancel remaining</button>
+    </div>
+  </div>
   <div id="myPeopleList" class="people-list"></div>
   <p id="contactPickerNote" class="muted" style="font-size:.8rem"></p>
 </section>
@@ -375,8 +385,7 @@ function updateSmsMeta(){
   $('smsMeta').textContent=`${s.len} characters · ${s.n} SMS${s.unicode?' (emoji or accents use more)':''}.${warn}`;
 }
 function currentMyMessage(name){
-  if(currentKind()==='custom')return $('myPeopleMessage').value.trim();
-  return templateBody(currentKind()==='rotate'?'daily':currentKind(), name||'');
+  return $('myPeopleMessage').value.trim();
 }
 
 function renderMyPeople(){
@@ -463,31 +472,54 @@ function stampLocal(people){
   });
   saveMyPeople();
 }
+let privateTextQueue=[];
+let activePrivateText=null;
+function renderPrivateTextQueue(){
+  const panel=$('privateTextQueue');
+  panel.hidden=!privateTextQueue.length;
+  if(!privateTextQueue.length)return;
+  const next=privateTextQueue[0];
+  $('privateTextStatus').textContent=activePrivateText
+    ?'Draft opened for '+next.name+'. Send it in Messages, then return and confirm below.'
+    :'Next: '+next.name+' · '+privateTextQueue.length+' private text(s) remaining.';
+  $('openPrivateText').textContent=activePrivateText?'Reopen this draft':'Open text for '+next.name;
+  $('confirmPrivateText').hidden=!activePrivateText;
+}
+function openPrivateText(){
+  const next=privateTextQueue[0];
+  if(!next)return;
+  activePrivateText=next;
+  renderPrivateTextQueue();
+  window.location.href='sms:'+next.phone+'?body='+encodeURIComponent(next.message);
+}
+async function confirmPrivateText(){
+  if(!activePrivateText)return;
+  const item=activePrivateText;
+  const person=myPeople.find(p=>String(p.id)===String(item.id));
+  if(person){
+    const marked=await markCircle(person,'Text');
+    if(!marked)return toast('Could not mark contacted. Try confirming again.');
+    stampLocal([person]);
+  }
+  privateTextQueue.shift();
+  activePrivateText=null;
+  renderPrivateTextQueue();
+  await loadShared();
+  toast(privateTextQueue.length?'Confirmed. Open the next private text.':'All selected texts confirmed.');
+}
 async function textPeople(people){
+  if(privateTextQueue.length){
+    renderPrivateTextQueue();
+    return toast('Finish or cancel the current text list first.');
+  }
   const withPhone=people.filter(p=>normalizePhone(p.phone));
   if(!withPhone.length)return toast('No phone number saved for the selected people');
-
-  // Keep every reminder private: never put multiple recipients in one SMS.
-  // For a single person, open the SMS directly. For multiple selected people,
-  // send them one at a time so replies cannot turn into a group conversation.
-  if(withPhone.length>1){
-    const first=withPhone[0];
-    const remaining=withPhone.slice(1);
-    localStorage.setItem('alycia.pendingTexts.v1',JSON.stringify(remaining.map(p=>p.id)));
-    toast('Opening a private text for '+firstName(first.name)+'. Return here for the next person.');
-    return textPeople([first]);
-  }
-
-  const p=withPhone[0];
-  const msg=currentMyMessage(p.name||'');
+  const msg=currentMyMessage('');
+  if(!msg)return toast('Write a message first');
   if(msg.length>320)return toast('Shorten the message before sending');
-
-  await markCircle(p,'Text');
-  stampLocal([p]);
-  await loadShared();
-
-  const href='sms:'+normalizePhone(p.phone)+'?body='+encodeURIComponent(msg);
-  window.location.href=href;
+  privateTextQueue=withPhone.map(p=>({id:p.id,name:p.name||p.phone,phone:normalizePhone(p.phone),message:msg}));
+  renderPrivateTextQueue();
+  openPrivateText();
 }
 async function markOnly(people){
   if(!people.length)return toast('Select at least one person');
@@ -549,7 +581,7 @@ $('addManual').onclick=()=>{
   toast('Added to your '+list+' list only');
 };
 $('messagePreset').onchange=()=>{fillMessageFor('');};
-$('myPeopleMessage').oninput=updateSmsMeta;
+$('myPeopleMessage').oninput=()=>{ $('messagePreset').value='custom'; updateSmsMeta(); };
 $('copySelectedMessage').onclick=()=>copy($('myPeopleMessage').value.trim()||currentMyMessage(''));
 $('myPeopleList').onchange=e=>{
   const c=e.target.closest('.person-check');
@@ -567,19 +599,16 @@ $('myPeopleList').onclick=e=>{
 };
 function selectedOnTab(){return myPeople.filter(p=>p.selected&&(listTab==='occasional'?p.listType==='occasional':p.listType!=='occasional'))}
 $('textSelected').onclick=()=>{const selected=selectedOnTab();if(!selected.length)return toast('Select at least one person');textPeople(selected)};
-window.addEventListener('focus',()=>{
-  try{
-    const ids=JSON.parse(localStorage.getItem('alycia.pendingTexts.v1')||'[]');
-    if(!Array.isArray(ids)||!ids.length)return;
-    const nextId=ids.shift();
-    localStorage.setItem('alycia.pendingTexts.v1',JSON.stringify(ids));
-    const p=myPeople.find(x=>String(x.id)===String(nextId));
-    if(p)setTimeout(()=>textPeople([p]),250);
-    else if(!ids.length)localStorage.removeItem('alycia.pendingTexts.v1');
-  }catch{
-    localStorage.removeItem('alycia.pendingTexts.v1');
-  }
-});
+// Remove the old auto-opening queue; opening a draft never confirms sending.
+localStorage.removeItem('alycia.pendingTexts.v1');
+$('openPrivateText').onclick=openPrivateText;
+$('confirmPrivateText').onclick=confirmPrivateText;
+$('skipPrivateText').onclick=()=>{
+  privateTextQueue.shift();activePrivateText=null;renderPrivateTextQueue();
+};
+$('cancelPrivateTexts').onclick=()=>{
+  privateTextQueue=[];activePrivateText=null;renderPrivateTextQueue();
+};
 $('markSelected').onclick=()=>markOnly(selectedOnTab());
 $('pickContacts').onclick=async()=>{
   if(!('contacts' in navigator)||!navigator.contacts?.select){$('contactPickerNote').textContent='This browser cannot open the contact picker. Use Add name, or open the page in Chrome on Android.';return toast('Contact picker is not supported here')}
