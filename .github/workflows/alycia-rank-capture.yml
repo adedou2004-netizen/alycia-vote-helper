@@ -1,8 +1,6 @@
-name: Alycia hourly rank capture
+name: Alycia manual rank capture
 
 on:
-  schedule:
-    - cron: "12 * * * *"
   workflow_dispatch:
 
 permissions:
