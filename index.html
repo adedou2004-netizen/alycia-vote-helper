@@ -193,8 +193,8 @@ details.card>summary::-webkit-details-marker{display:none}
 
 <section class="card section-anchor" id="rankReports">
   <p class="eyebrow">REPORTS</p>
-  <h2>All 20 kids</h2>
-  <p class="muted">Starting rank versus now, for every child still in the Top 20. Green climbed. Red dropped. The bottom of the list matters.</p>
+  <h2>All 15 kids</h2>
+  <p class="muted">Starting rank versus now, for the 15 kids still in. Start is last night’s 10:12 p.m. snapshot. Green climbed. Red dropped. The bottom of the list matters.</p>
   <div class="actions">
     <button class="btn" id="refreshMovement" type="button">Refresh</button>
     <button class="btn" id="downloadRankingSheet" type="button">Download spreadsheet</button>
@@ -212,7 +212,7 @@ details.card>summary::-webkit-details-marker{display:none}
     </div>
     <div id="currentRankReport">
       <h3 style="margin-top:18px">Current rank</h3>
-      <p class="muted" style="font-size:.82rem">All 20. Start is the Top-20 reset on September 25. Previous is the snapshot just before the latest one.</p>
+      <p class="muted" style="font-size:.82rem">All 15. Start is the Oct 1, 10:12 p.m. snapshot (saved 9:12 p.m. Toronto). Previous is the snapshot just before the latest one.</p>
       <div class="report-wrap"><table class="report-table">
         <thead><tr><th>#</th><th>Child</th><th>Start</th><th>Previous</th><th>Now</th><th>Move</th></tr></thead>
         <tbody id="currentRankRows"></tbody>
@@ -220,7 +220,7 @@ details.card>summary::-webkit-details-marker{display:none}
     </div>
     <div id="biggestMovementReport" hidden>
       <h3 style="margin-top:18px">Largest one-snapshot jumps</h3>
-      <p class="muted" style="font-size:.82rem">Same 20 kids, sorted by the biggest climb between two saved snapshots.</p>
+      <p class="muted" style="font-size:.82rem">Same 15 kids, sorted by the biggest climb between two saved snapshots in this round.</p>
       <div class="report-wrap"><table class="report-table">
         <thead><tr><th>Child</th><th>From</th><th>To</th><th>Jump</th><th>When</th><th>Now</th><th>Total</th></tr></thead>
         <tbody id="biggestMovementRows"></tbody>
@@ -360,7 +360,7 @@ function templateBody(kind, name){
     `Hey ${who}, if you have a minute, Alycia could use today's free vote. She is ${rank}. ${VOTE}`,
     `${who}, a quick vote for Alycia today? She is ${rank}. ${VOTE} Thanks!`
   ];
-  if(kind==='rank')return `Hi ${who} — Alycia is ${rank} in the Top 20. Vote here: ${VOTE}`;
+  if(kind==='rank')return `Hi ${who} — Alycia is ${rank} in the Top 15. Vote here: ${VOTE}`;
   if(kind==='thanks')return `Thank you ${who} for helping Alycia. She is ${rank}. Today's vote: ${VOTE}`;
   const day=Number(today().slice(8,10))||1;
   const offset=(name?normalizeName(name).length:0);
@@ -649,23 +649,23 @@ async function loadMovementReport(showToast=false){
     if(showToast)toast('Reports refreshed');
   }catch(e){console.error(e);if(status)status.textContent='Could not load the movement reports'}
 }
-const TOP20_RESET_AT='2026-09-25T20:55:28.083Z';
-const TOP20_PROFILES=new Set(['https://thesuperkid.org/2026/mason-da49','https://thesuperkid.org/2026/jameson-2b6a','https://thesuperkid.org/2026/hunter-2c40','https://thesuperkid.org/2026/kai-f690','https://thesuperkid.org/2026/alycia-5613','https://thesuperkid.org/2026/kirby-285a','https://thesuperkid.org/2026/alexander-99ec','https://thesuperkid.org/2026/tristan-5092','https://thesuperkid.org/2026/trey-c5ce','https://thesuperkid.org/2026/keelan-64d0','https://thesuperkid.org/2026/ismany-4bf6','https://thesuperkid.org/2026/le-39-princeton-c0b3','https://thesuperkid.org/2026/caden-3c42','https://thesuperkid.org/2026/maxwell-c549','https://thesuperkid.org/2026/tayvien-eb48','https://thesuperkid.org/2026/dreamma-553b','https://thesuperkid.org/2026/sarine-7379','https://thesuperkid.org/2026/emmit-084a','https://thesuperkid.org/2026/lilliana-457a','https://thesuperkid.org/2026/colton-47b4']);
-function normalizedTop20Capture(rows){
+const TOP15_RESET_AT='2026-10-02T01:12:00.191497+00:00';
+const TOP15_PROFILES=new Set(['https://thesuperkid.org/2026/mason-da49','https://thesuperkid.org/2026/jameson-2b6a','https://thesuperkid.org/2026/hunter-2c40','https://thesuperkid.org/2026/kai-f690','https://thesuperkid.org/2026/alycia-5613','https://thesuperkid.org/2026/kirby-285a','https://thesuperkid.org/2026/alexander-99ec','https://thesuperkid.org/2026/tristan-5092','https://thesuperkid.org/2026/trey-c5ce','https://thesuperkid.org/2026/keelan-64d0','https://thesuperkid.org/2026/ismany-4bf6','https://thesuperkid.org/2026/le-39-princeton-c0b3','https://thesuperkid.org/2026/caden-3c42','https://thesuperkid.org/2026/maxwell-c549','https://thesuperkid.org/2026/tayvien-eb48']);
+function normalizedTop15Capture(rows){
   const byProfile=new Map();
   [...rows].sort((a,b)=>Number(a.rank)-Number(b.rank)).forEach(x=>{
     const url=String(x.profile_url||'').replace(/\/$/,'');
-    if(!TOP20_PROFILES.has(url)||byProfile.has(url))return;
+    if(!TOP15_PROFILES.has(url)||byProfile.has(url))return;
     byProfile.set(url,{...x,profile_url:url});
   });
-  if(byProfile.size!==TOP20_PROFILES.size)return null;
+  if(byProfile.size!==TOP15_PROFILES.size)return null;
   return [...byProfile.values()].sort((a,b)=>Number(a.rank)-Number(b.rank)).map((x,i)=>({...x,rank:i+1,_id:x.profile_url,_label:x.contestant_name}));
 }
 function historyModel(){
-  const eligible=groupSnapshots.filter(x=>new Date(x.captured_at)>=new Date(TOP20_RESET_AT)&&TOP20_PROFILES.has(String(x.profile_url||'').replace(/\/$/,'')));
+  const eligible=groupSnapshots.filter(x=>new Date(x.captured_at)>=new Date(TOP15_RESET_AT)&&TOP15_PROFILES.has(String(x.profile_url||'').replace(/\/$/,'')));
   const times=[...new Set(eligible.map(x=>x.captured_at))].sort((a,b)=>new Date(a)-new Date(b));
   const captures=[],keptTimes=[];
-  times.forEach(t=>{const cap=normalizedTop20Capture(eligible.filter(x=>x.captured_at===t));if(cap){keptTimes.push(t);captures.push(cap)}});
+  times.forEach(t=>{const cap=normalizedTop15Capture(eligible.filter(x=>x.captured_at===t));if(cap){keptTimes.push(t);captures.push(cap)}});
   const canonical=new Map();
   captures.forEach(cap=>cap.forEach(x=>canonical.set(x._id,{id:x._id,label:x._label,name:x.contestant_name})));
   const series=[];
@@ -713,10 +713,10 @@ function renderMovementReport(){
   if(latestAly!=null){
     const delta=prevAly!=null?prevAly-latestAly:null;
     $('todayRank').textContent='#'+latestAly+(delta>0?' ↑'+delta:delta<0?' ↓'+Math.abs(delta):'');
-    $('todayTop20').textContent='Top 20';
+    $('todayTop20').textContent='Top 15';
   }
-  if(!model.times.length){status.textContent='No valid Top-20 snapshot has been recorded yet.';return}
-  status.textContent=`All 20 kids · ${model.times.length} snapshot${model.times.length===1?'':'s'} from ${captureLabel(model.times[0])} through ${captureLabel(model.times[model.times.length-1])}.`;
+  if(!model.times.length){status.textContent='No valid Top-15 snapshot has been recorded yet.';return}
+  status.textContent=`All 15 kids · ${model.times.length} snapshot${model.times.length===1?'':'s'} from ${captureLabel(model.times[0])} through ${captureLabel(model.times[model.times.length-1])}. Start is the Oct 1, 10:12 p.m. snapshot.`;
   renderCurrentRank(model);renderBiggestMovement(model);
   if(currentKind()!=='custom'&&!$('myPeopleMessage').value)fillMessageFor('');
 }

@@ -1,6 +1,8 @@
-name: Alycia manual rank capture
+name: Alycia hourly rank capture
 
 on:
+  schedule:
+    - cron: "12 * * * *"
   workflow_dispatch:
 
 permissions:
@@ -25,7 +27,7 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Capture and save Top-20 ranking
+      - name: Capture and save Top-15 ranking
         env:
           ALYCIA_CAPTURE_TOKEN: ${{ secrets.ALYCIA_CAPTURE_TOKEN }}
         run: node scripts/capture-rank.mjs

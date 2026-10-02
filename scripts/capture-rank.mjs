@@ -5,10 +5,10 @@ const PROFILE = "https://thesuperkid.org/2026/alycia-5613";
 const SUPABASE_URL = "https://dbqrenlvinqheyjppxby.supabase.co";
 const TOKEN = process.env.ALYCIA_CAPTURE_TOKEN;
 
-// The 20 contestants who advanced from this group on September 25, 2026.
+// The 15 contestants still in this group for the Top 10 round.
 // The SuperKid site keeps eliminated contestants visible, so every snapshot
-// filters the full group page down to this fixed set and ranks only these 20.
-const ACTIVE_TOP_20 = new Set([
+// filters the full group page down to this fixed set and ranks only these 15.
+const ACTIVE_TOP_15 = new Set([
   "https://thesuperkid.org/2026/mason-da49",
   "https://thesuperkid.org/2026/jameson-2b6a",
   "https://thesuperkid.org/2026/hunter-2c40",
@@ -23,12 +23,7 @@ const ACTIVE_TOP_20 = new Set([
   "https://thesuperkid.org/2026/le-39-princeton-c0b3",
   "https://thesuperkid.org/2026/caden-3c42",
   "https://thesuperkid.org/2026/maxwell-c549",
-  "https://thesuperkid.org/2026/tayvien-eb48",
-  "https://thesuperkid.org/2026/dreamma-553b",
-  "https://thesuperkid.org/2026/sarine-7379",
-  "https://thesuperkid.org/2026/emmit-084a",
-  "https://thesuperkid.org/2026/lilliana-457a",
-  "https://thesuperkid.org/2026/colton-47b4"
+  "https://thesuperkid.org/2026/tayvien-eb48"
 ]);
 
 async function sendAlert(message) {
@@ -86,7 +81,7 @@ async function getLiveAlyciaRank(page) {
   return Number(m[1]);
 }
 
-async function extractTop20(page) {
+async function extractTop15(page) {
   await page.goto(GROUP_URL, { waitUntil: "domcontentloaded", timeout: 45000 });
   await page.waitForTimeout(2200);
   await scrollAndExpand(page);
@@ -111,22 +106,22 @@ async function extractTop20(page) {
     return [...seen.values()];
   });
 
-  const top20 = items
+  const top15 = items
     .map(x => ({
       ...x,
       contestant_name: x.contestant_name.replace(/\s*(Vote|View Profile).*$/i, "").trim()
     }))
-    .filter(x => ACTIVE_TOP_20.has(x.profile_url));
+    .filter(x => ACTIVE_TOP_15.has(x.profile_url));
 
-  if (top20.length !== ACTIVE_TOP_20.size) {
-    const found = new Set(top20.map(x => x.profile_url));
-    const missing = [...ACTIVE_TOP_20].filter(url => !found.has(url));
+  if (top15.length !== ACTIVE_TOP_15.size) {
+    const found = new Set(top15.map(x => x.profile_url));
+    const missing = [...ACTIVE_TOP_15].filter(url => !found.has(url));
     throw new Error(
-      `Expected all ${ACTIVE_TOP_20.size} Top-20 contestants but found ${top20.length}. Missing: ${missing.join(", ")}`
+      `Expected all ${ACTIVE_TOP_15.size} Top-15 contestants but found ${top15.length}. Missing: ${missing.join(", ")}`
     );
   }
 
-  return top20.map((x, i) => ({ ...x, rank: i + 1 }));
+  return top15.map((x, i) => ({ ...x, rank: i + 1 }));
 }
 
 async function main() {
@@ -141,13 +136,13 @@ async function main() {
 
   try {
     const liveRank = await getLiveAlyciaRank(page);
-    const contestants = await extractTop20(page);
+    const contestants = await extractTop15(page);
     const alycia = contestants.find(x => x.profile_url === PROFILE);
 
-    if (!alycia) throw new Error("Alycia was not found among the fixed Top 20");
+    if (!alycia) throw new Error("Alycia was not found among the fixed Top 15");
     if (alycia.rank !== liveRank) {
       throw new Error(
-        `Rank verification failed: profile says #${liveRank}, filtered Top-20 order says #${alycia.rank}`
+        `Rank verification failed: profile says #${liveRank}, filtered Top-15 order says #${alycia.rank}`
       );
     }
 
@@ -159,12 +154,12 @@ async function main() {
       alycia_rank: liveRank
     });
 
-    if (saved.row_count !== ACTIVE_TOP_20.size || saved.alycia_rank !== liveRank) {
-      throw new Error("Database verification response did not match the Top-20 capture");
+    if (saved.row_count !== ACTIVE_TOP_15.size || saved.alycia_rank !== liveRank) {
+      throw new Error("Database verification response did not match the Top-15 capture");
     }
 
     console.log(
-      `SUCCESS: saved ${saved.row_count} Top-20 contestants; Alycia #${saved.alycia_rank}; ${saved.captured_at}`
+      `SUCCESS: saved ${saved.row_count} Top-15 contestants; Alycia #${saved.alycia_rank}; ${saved.captured_at}`
     );
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
