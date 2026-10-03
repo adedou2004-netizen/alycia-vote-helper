@@ -27,7 +27,7 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Capture and save Top-10 ranking
+      - name: Capture and save 15 contestants in Top 10 round
         env:
           ALYCIA_CAPTURE_TOKEN: ${{ secrets.ALYCIA_CAPTURE_TOKEN }}
         run: node scripts/capture-rank.mjs
