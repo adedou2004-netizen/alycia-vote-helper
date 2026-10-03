@@ -5,20 +5,26 @@ const PROFILE = "https://thesuperkid.org/2026/alycia-5613";
 const SUPABASE_URL = "https://dbqrenlvinqheyjppxby.supabase.co";
 const TOKEN = process.env.ALYCIA_CAPTURE_TOKEN;
 
-// The 10 contestants who advanced at the Oct 1, 2026 10:00 p.m. Toronto cutoff.
-// Eliminated contestants remain visible on the SuperKid page, so snapshots
-// filter to this fixed Top 10 and rank only these contestants.
-const ACTIVE_TOP_10 = new Set([
+// The 15 contestants still competing in the Top 15 round.
+// At the next cutoff, only the Top 15 will advance. Eliminated contestants from
+// earlier rounds remain visible on the SuperKid page, so snapshots filter to
+// this fixed set of 15 current contestants.
+const ACTIVE_TOP_15 = new Set([
   "https://thesuperkid.org/2026/mason-da49",
-  "https://thesuperkid.org/2026/hunter-2c40",
   "https://thesuperkid.org/2026/jameson-2b6a",
-  "https://thesuperkid.org/2026/alycia-5613",
+  "https://thesuperkid.org/2026/hunter-2c40",
   "https://thesuperkid.org/2026/kai-f690",
+  "https://thesuperkid.org/2026/alycia-5613",
   "https://thesuperkid.org/2026/kirby-285a",
   "https://thesuperkid.org/2026/alexander-99ec",
   "https://thesuperkid.org/2026/tristan-5092",
   "https://thesuperkid.org/2026/trey-c5ce",
-  "https://thesuperkid.org/2026/keelan-64d0"
+  "https://thesuperkid.org/2026/keelan-64d0",
+  "https://thesuperkid.org/2026/ismany-4bf6",
+  "https://thesuperkid.org/2026/le-39-princeton-c0b3",
+  "https://thesuperkid.org/2026/caden-3c42",
+  "https://thesuperkid.org/2026/maxwell-c549",
+  "https://thesuperkid.org/2026/tayvien-eb48"
 ]);
 
 async function sendAlert(message) {
@@ -76,7 +82,7 @@ async function getLiveAlyciaRank(page) {
   return Number(m[1]);
 }
 
-async function extractTop10(page) {
+async function extractTop15(page) {
   await page.goto(GROUP_URL, { waitUntil: "domcontentloaded", timeout: 45000 });
   await page.waitForTimeout(2200);
   await scrollAndExpand(page);
@@ -101,22 +107,22 @@ async function extractTop10(page) {
     return [...seen.values()];
   });
 
-  const top10 = items
+  const top15 = items
     .map(x => ({
       ...x,
       contestant_name: x.contestant_name.replace(/\s*(Vote|View Profile).*$/i, "").trim()
     }))
-    .filter(x => ACTIVE_TOP_10.has(x.profile_url));
+    .filter(x => ACTIVE_TOP_15.has(x.profile_url));
 
-  if (top10.length !== ACTIVE_TOP_10.size) {
-    const found = new Set(top10.map(x => x.profile_url));
-    const missing = [...ACTIVE_TOP_10].filter(url => !found.has(url));
+  if (top15.length !== ACTIVE_TOP_15.size) {
+    const found = new Set(top15.map(x => x.profile_url));
+    const missing = [...ACTIVE_TOP_15].filter(url => !found.has(url));
     throw new Error(
-      `Expected all ${ACTIVE_TOP_10.size} Top-10 contestants but found ${top10.length}. Missing: ${missing.join(", ")}`
+      `Expected all ${ACTIVE_TOP_15.size} Top-15 contestants but found ${top15.length}. Missing: ${missing.join(", ")}`
     );
   }
 
-  return top10.map((x, i) => ({ ...x, rank: i + 1 }));
+  return top15.map((x, i) => ({ ...x, rank: i + 1 }));
 }
 
 async function main() {
@@ -131,13 +137,13 @@ async function main() {
 
   try {
     const liveRank = await getLiveAlyciaRank(page);
-    const contestants = await extractTop10(page);
+    const contestants = await extractTop15(page);
     const alycia = contestants.find(x => x.profile_url === PROFILE);
 
-    if (!alycia) throw new Error("Alycia was not found among the fixed Top 10");
+    if (!alycia) throw new Error("Alycia was not found among the fixed Top 15");
     if (alycia.rank !== liveRank) {
       throw new Error(
-        `Rank verification failed: profile says #${liveRank}, filtered Top-10 order says #${alycia.rank}`
+        `Rank verification failed: profile says #${liveRank}, filtered Top-15 order says #${alycia.rank}`
       );
     }
 
@@ -149,12 +155,12 @@ async function main() {
       alycia_rank: liveRank
     });
 
-    if (saved.row_count !== ACTIVE_TOP_10.size || saved.alycia_rank !== liveRank) {
-      throw new Error("Database verification response did not match the Top-10 capture");
+    if (saved.row_count !== ACTIVE_TOP_15.size || saved.alycia_rank !== liveRank) {
+      throw new Error("Database verification response did not match the Top-15 capture");
     }
 
     console.log(
-      `SUCCESS: saved ${saved.row_count} Top-10 contestants; Alycia #${saved.alycia_rank}; ${saved.captured_at}`
+      `SUCCESS: saved ${saved.row_count} Top-15 contestants; Alycia #${saved.alycia_rank}; ${saved.captured_at}`
     );
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
