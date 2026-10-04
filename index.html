@@ -42,6 +42,8 @@ textarea{resize:vertical}
 .move-flat{color:var(--muted);font-weight:700}
 .report-wrap{overflow-x:auto}
 .report-highlight{background:#faf8ff}
+.advance-cutoff td{border-bottom:3px solid var(--green)}
+.advance-note td{font-size:.76rem;font-weight:800;color:var(--green);background:#f0faf5;text-align:center;padding:6px 7px}
 .report-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
 .report-kpi{background:#f8f6fc;border-radius:13px;padding:10px;text-align:center}
 .report-kpi strong{display:block;font-size:1.35rem}
@@ -212,7 +214,7 @@ details.card>summary::-webkit-details-marker{display:none}
     </div>
     <div id="currentRankReport">
       <h3 style="margin-top:18px">Current rank</h3>
-      <p class="muted" style="font-size:.82rem">All 15. The Top 10 round starts Oct 1 at 10:00 p.m. Toronto time. The first saved snapshot after that cutoff is used as the starting ranking. Previous is the snapshot just before the latest one.</p>
+      <p class="muted" style="font-size:.82rem">All 15. The Top 10 round starts Oct 1 at 10:00 p.m. Toronto time. The Start column is frozen to the ranking at the beginning of this round and never changes. Previous is the snapshot just before the latest one.</p>
       <div class="report-wrap"><table class="report-table">
         <thead><tr><th>#</th><th>Child</th><th>Start</th><th>Previous</th><th>Now</th><th>Move</th></tr></thead>
         <tbody id="currentRankRows"></tbody>
@@ -650,7 +652,9 @@ async function loadMovementReport(showToast=false){
   }catch(e){console.error(e);if(status)status.textContent='Could not load the movement reports'}
 }
 const TOP10_ROUND_START_AT='2026-10-02T02:00:00+00:00';
-const TOP10_ROUND_PROFILES=new Set(['https://thesuperkid.org/2026/mason-da49','https://thesuperkid.org/2026/jameson-2b6a','https://thesuperkid.org/2026/hunter-2c40','https://thesuperkid.org/2026/kai-f690','https://thesuperkid.org/2026/alycia-5613','https://thesuperkid.org/2026/kirby-285a','https://thesuperkid.org/2026/alexander-99ec','https://thesuperkid.org/2026/tristan-5092','https://thesuperkid.org/2026/trey-c5ce','https://thesuperkid.org/2026/keelan-64d0','https://thesuperkid.org/2026/ismany-4bf6','https://thesuperkid.org/2026/le-39-princeton-c0b3','https://thesuperkid.org/2026/caden-3c42','https://thesuperkid.org/2026/maxwell-c549','https://thesuperkid.org/2026/tayvien-eb48']);
+const TOP10_ROUND_BASELINE=['https://thesuperkid.org/2026/mason-da49','https://thesuperkid.org/2026/jameson-2b6a','https://thesuperkid.org/2026/hunter-2c40','https://thesuperkid.org/2026/kai-f690','https://thesuperkid.org/2026/alycia-5613','https://thesuperkid.org/2026/kirby-285a','https://thesuperkid.org/2026/alexander-99ec','https://thesuperkid.org/2026/tristan-5092','https://thesuperkid.org/2026/trey-c5ce','https://thesuperkid.org/2026/keelan-64d0','https://thesuperkid.org/2026/ismany-4bf6','https://thesuperkid.org/2026/le-39-princeton-c0b3','https://thesuperkid.org/2026/caden-3c42','https://thesuperkid.org/2026/maxwell-c549','https://thesuperkid.org/2026/tayvien-eb48'];
+const TOP10_ROUND_PROFILES=new Set(TOP10_ROUND_BASELINE);
+const TOP10_START_RANK=new Map(TOP10_ROUND_BASELINE.map((url,i)=>[url,i+1]));
 function normalizedTop10RoundCapture(rows){
   const byProfile=new Map();
   [...rows].sort((a,b)=>Number(a.rank)-Number(b.rank)).forEach(x=>{
@@ -676,7 +680,7 @@ function moveText(v){return v===null||v===undefined?'—':v>0?'↑ '+v:v<0?'↓ 
 function movementRows(model){
   const li=model.times.length-1,pi=li-1;
   return model.series.map(s=>{
-    const first=s.points.length?s.points[0]:null,current=li>=0?s.points[li]:null,previous=pi>=0?s.points[pi]:null;
+    const first=TOP10_START_RANK.get(s.id)??null,current=li>=0?s.points[li]:null,previous=pi>=0?s.points[pi]:null;
     let bestJump=null;
     for(let i=1;i<s.points.length;i++){
       const from=s.points[i-1],to=s.points[i];
@@ -690,7 +694,11 @@ function movementRows(model){
 function captureLabel(t){return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Toronto',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}).format(new Date(t))}
 function renderCurrentRank(model){
   const rows=movementRows(model).sort((a,b)=>a.current-b.current);
-  $('currentRankRows').innerHTML=rows.map(x=>`<tr class="${String(x.name||'').trim().toLowerCase()==='alycia'?'report-highlight':''}"><td>${esc(x.current)}</td><td><strong>${esc(x.label)}</strong></td><td>#${esc(x.first)}</td><td>${x.previous!=null?'#'+esc(x.previous):'—'}</td><td><strong>#${esc(x.current)}</strong></td><td class="${x.total>0?'move-up':x.total<0?'move-down':'move-flat'}">${moveText(x.total)}</td></tr>`).join('');
+  $('currentRankRows').innerHTML=rows.map((x,i)=>{
+    const classes=[String(x.name||'').trim().toLowerCase()==='alycia'?'report-highlight':'',x.current===10?'advance-cutoff':''].filter(Boolean).join(' ');
+    const row=`<tr class="${classes}"><td>${esc(x.current)}</td><td><strong>${esc(x.label)}</strong></td><td>#${esc(x.first)}</td><td>${x.previous!=null?'#'+esc(x.previous):'—'}</td><td><strong>#${esc(x.current)}</strong></td><td class="${x.total>0?'move-up':x.total<0?'move-down':'move-flat'}">${moveText(x.total)}</td></tr>`;
+    return row+(x.current===10?'<tr class="advance-note"><td colspan="6">TOP 10 ABOVE THIS LINE ADVANCE</td></tr>':'');
+  }).join('');
 }
 function jumpWindow(j){if(!j)return '—';return captureLabel(j.fromTime)+' → '+captureLabel(j.toTime)}
 function renderBiggestMovement(model){
