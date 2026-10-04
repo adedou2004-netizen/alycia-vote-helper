@@ -652,7 +652,7 @@ async function loadMovementReport(showToast=false){
   }catch(e){console.error(e);if(status)status.textContent='Could not load the movement reports'}
 }
 const TOP10_ROUND_START_AT='2026-10-02T02:00:00+00:00';
-const TOP10_ROUND_BASELINE=['https://thesuperkid.org/2026/mason-da49','https://thesuperkid.org/2026/jameson-2b6a','https://thesuperkid.org/2026/hunter-2c40','https://thesuperkid.org/2026/kai-f690','https://thesuperkid.org/2026/alycia-5613','https://thesuperkid.org/2026/kirby-285a','https://thesuperkid.org/2026/alexander-99ec','https://thesuperkid.org/2026/tristan-5092','https://thesuperkid.org/2026/trey-c5ce','https://thesuperkid.org/2026/keelan-64d0','https://thesuperkid.org/2026/ismany-4bf6','https://thesuperkid.org/2026/le-39-princeton-c0b3','https://thesuperkid.org/2026/caden-3c42','https://thesuperkid.org/2026/maxwell-c549','https://thesuperkid.org/2026/tayvien-eb48'];
+const TOP10_ROUND_BASELINE=['https://thesuperkid.org/2026/mason-da49','https://thesuperkid.org/2026/hunter-2c40','https://thesuperkid.org/2026/jameson-2b6a','https://thesuperkid.org/2026/alycia-5613','https://thesuperkid.org/2026/kai-f690','https://thesuperkid.org/2026/kirby-285a','https://thesuperkid.org/2026/alexander-99ec','https://thesuperkid.org/2026/tristan-5092','https://thesuperkid.org/2026/trey-c5ce','https://thesuperkid.org/2026/keelan-64d0','https://thesuperkid.org/2026/ismany-4bf6','https://thesuperkid.org/2026/tayvien-eb48','https://thesuperkid.org/2026/maxwell-c549','https://thesuperkid.org/2026/le-39-princeton-c0b3','https://thesuperkid.org/2026/caden-3c42'];
 const TOP10_ROUND_PROFILES=new Set(TOP10_ROUND_BASELINE);
 const TOP10_START_RANK=new Map(TOP10_ROUND_BASELINE.map((url,i)=>[url,i+1]));
 function normalizedTop10RoundCapture(rows){
