@@ -95,7 +95,7 @@ details.card>summary::-webkit-details-marker{display:none}
   </div>
   <div class="today-grid">
     <div class="today-box"><strong id="todayRank">—</strong><span>Alycia rank</span></div>
-    <div class="today-box"><strong id="todayTop20">—</strong><span>Current round</span></div>
+    <div class="today-box"><strong id="todayTop10">—</strong><span>Top 10 round</span></div>
     <div class="today-box"><strong id="todayDue">0</strong><span>My daily due</span></div>
     <div class="today-box"><strong id="todayContacted">0</strong><span>Circle contacted today</span></div>
   </div>
@@ -193,7 +193,7 @@ details.card>summary::-webkit-details-marker{display:none}
 
 <section class="card section-anchor" id="rankReports">
   <p class="eyebrow">REPORTS</p>
-  <h2>All 15 kids</h2>
+  <h2>Top 10 round — 15 kids remaining</h2>
   <p class="muted">Starting rank versus now for all 15 kids still competing in the Top 10 round. This round begins Thursday, Oct 1 at 10:00 p.m. Toronto time. At the next cutoff, only the Top 10 advance. Green climbed. Red dropped. The bottom of the list matters.</p>
   <div class="actions">
     <button class="btn" id="refreshMovement" type="button">Refresh</button>
@@ -713,7 +713,7 @@ function renderMovementReport(){
   if(latestAly!=null){
     const delta=prevAly!=null?prevAly-latestAly:null;
     $('todayRank').textContent='#'+latestAly+(delta>0?' ↑'+delta:delta<0?' ↓'+Math.abs(delta):'');
-    $('todayTop20').textContent='Top 10 round';
+    $('todayTop10').textContent='Top 10 round';
   }
   if(!model.times.length){status.textContent='No valid 15-contestant snapshot has been recorded yet.';return}
   status.textContent=`All 15 kids in the Top 10 round · ${model.times.length} snapshot${model.times.length===1?'':'s'} from ${captureLabel(model.times[0])} through ${captureLabel(model.times[model.times.length-1])}. Round start: Oct 1 at 10:00 p.m. Toronto time.`;
