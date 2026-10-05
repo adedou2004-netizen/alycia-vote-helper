@@ -669,7 +669,27 @@ function historyModel(){
   const eligible=groupSnapshots.filter(x=>new Date(x.captured_at)>=new Date(TOP10_ROUND_START_AT)&&TOP10_ROUND_PROFILES.has(String(x.profile_url||'').replace(/\/$/,'')));
   const times=[...new Set(eligible.map(x=>x.captured_at))].sort((a,b)=>new Date(a)-new Date(b));
   const captures=[],keptTimes=[];
-  times.forEach(t=>{const cap=normalizedTop10RoundCapture(eligible.filter(x=>x.captured_at===t));if(cap){keptTimes.push(t);captures.push(cap)}});
+
+  // Preserve the official Top-10 round baseline at the Thursday 10 p.m. cutoff,
+  // even though the first database capture after the cutoff was Friday morning.
+  const baselineCapture=TOP10_ROUND_BASELINE.map((url,i)=>({
+    contestant_name:(groupSnapshots.find(x=>String(x.profile_url||'').replace(/\/$/,'')===url)?.contestant_name)||url.split('/').pop(),
+    profile_url:url,
+    rank:i+1,
+    _id:url,
+    _label:(groupSnapshots.find(x=>String(x.profile_url||'').replace(/\/$/,'')===url)?.contestant_name)||url.split('/').pop()
+  }));
+  keptTimes.push(TOP10_ROUND_START_AT);
+  captures.push(baselineCapture);
+
+  times.forEach(t=>{
+    const cap=normalizedTop10RoundCapture(eligible.filter(x=>x.captured_at===t));
+    if(cap){
+      if(new Date(t).getTime()===new Date(TOP10_ROUND_START_AT).getTime())return;
+      keptTimes.push(t);
+      captures.push(cap);
+    }
+  });
   const canonical=new Map();
   captures.forEach(cap=>cap.forEach(x=>canonical.set(x._id,{id:x._id,label:x._label,name:x.contestant_name})));
   const series=[];
