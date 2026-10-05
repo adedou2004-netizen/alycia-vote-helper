@@ -363,7 +363,7 @@ function templateBody(kind, name){
     `${who}, a quick vote for Alycia today? She is ${rank}. ${VOTE} Thanks!`
   ];
   if(kind==='rank')return `Hi ${who} — Alycia is ${rank} in the Top 10. Vote here: ${VOTE}`;
-  if(kind==='thanks')return `Thank you ${who} for helping Alycia. She is ${rank}. Today's vote: ${VOTE}`;
+  if(kind==='thanks')return `Thank you ${who} so much for supporting Alycia! Today is special — you get 2 FREE votes, so please use both for Alycia. Every vote helps! ${VOTE}`;
   const day=Number(today().slice(8,10))||1;
   const offset=(name?normalizeName(name).length:0);
   return daily[(day+offset)%daily.length];
