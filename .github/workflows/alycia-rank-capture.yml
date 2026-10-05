@@ -2,8 +2,6 @@ name: Alycia manual rank capture
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "12 * * * *"
 
 permissions:
   contents: read
