@@ -666,6 +666,24 @@ function normalizedTop10RoundCapture(rows){
   return [...byProfile.values()].sort((a,b)=>Number(a.rank)-Number(b.rank)).map((x,i)=>({...x,rank:i+1,_id:x.profile_url,_label:x.contestant_name}));
 }
 function historyModel(){
+  // At 10:12 PM Toronto on October 8, 2026, start a fresh round with the 10 finalists.
+  // Their first actual saved snapshot is the immutable starting baseline.
+  const nextRows=groupSnapshots.filter(x=>new Date(x.captured_at)>=new Date('2026-10-09T02:00:00Z'));
+  const nextTimes=[...new Set(nextRows.map(x=>x.captured_at))].sort((a,b)=>new Date(a)-new Date(b));
+  const nextCaptures=[], validTimes=[];
+  nextTimes.forEach(t=>{
+    const rows=nextRows.filter(x=>x.captured_at===t).sort((a,b)=>Number(a.rank)-Number(b.rank));
+    if(rows.length!==10||new Set(rows.map(x=>x.profile_url)).size!==10)return;
+    nextCaptures.push(rows.map((x,i)=>({...x,rank:i+1,_id:x.profile_url,_label:x.contestant_name})));
+    validTimes.push(t);
+  });
+  if(nextCaptures.length){
+    const startingProfiles=new Set(nextCaptures[0].map(x=>x._id));
+    const captures=nextCaptures.filter(cap=>cap.every(x=>startingProfiles.has(x._id)));
+    const times=validTimes.filter((t,i)=>nextCaptures[i].every(x=>startingProfiles.has(x._id)));
+    const series=nextCaptures[0].map(x=>({id:x._id,label:x._label,name:x.contestant_name,points:captures.map(cap=>cap.find(y=>y._id===x._id)?.rank??null)}));
+    return {roundType:'top5',times,captures,series};
+  }
   const eligible=groupSnapshots.filter(x=>new Date(x.captured_at)>=new Date(TOP10_ROUND_START_AT)&&TOP10_ROUND_PROFILES.has(String(x.profile_url||'').replace(/\/$/,'')));
   const times=[...new Set(eligible.map(x=>x.captured_at))].sort((a,b)=>new Date(a)-new Date(b));
   const captures=[],keptTimes=[];
@@ -700,7 +718,7 @@ function moveText(v){return v===null||v===undefined?'—':v>0?'↑ '+v:v<0?'↓ 
 function movementRows(model){
   const li=model.times.length-1,pi=li-1;
   return model.series.map(s=>{
-    const first=TOP10_START_RANK.get(s.id)??null,current=li>=0?s.points[li]:null,previous=pi>=0?s.points[pi]:null;
+    const first=model.roundType==='top5'?s.points[0]:(TOP10_START_RANK.get(s.id)??null),current=li>=0?s.points[li]:null,previous=pi>=0?s.points[pi]:null;
     let bestJump=null;
     for(let i=1;i<s.points.length;i++){
       const from=s.points[i-1],to=s.points[i];
@@ -715,9 +733,9 @@ function captureLabel(t){return new Intl.DateTimeFormat('en-CA',{timeZone:'Ameri
 function renderCurrentRank(model){
   const rows=movementRows(model).sort((a,b)=>a.current-b.current);
   $('currentRankRows').innerHTML=rows.map((x,i)=>{
-    const classes=[String(x.name||'').trim().toLowerCase()==='alycia'?'report-highlight':'',x.current===10?'advance-cutoff':''].filter(Boolean).join(' ');
+    const classes=[String(x.name||'').trim().toLowerCase()==='alycia'?'report-highlight':'',x.current===(model.roundType==='top5'?5:10)?'advance-cutoff':''].filter(Boolean).join(' ');
     const row=`<tr class="${classes}"><td>${esc(x.current)}</td><td><strong>${esc(x.label)}</strong></td><td>#${esc(x.first)}</td><td>${x.previous!=null?'#'+esc(x.previous):'—'}</td><td><strong>#${esc(x.current)}</strong></td><td class="${x.total>0?'move-up':x.total<0?'move-down':'move-flat'}">${moveText(x.total)}</td></tr>`;
-    return row+(x.current===10?'<tr class="advance-note"><td colspan="6">TOP 10 ABOVE THIS LINE ADVANCE</td></tr>':'');
+    return row+(x.current===(model.roundType==='top5'?5:10)?'<tr class="advance-note"><td colspan="6">TOP '+(model.roundType==='top5'?'5':'10')+' ABOVE THIS LINE ADVANCE</td></tr>':'');
   }).join('');
 }
 function jumpWindow(j){if(!j)return '—';return captureLabel(j.fromTime)+' → '+captureLabel(j.toTime)}
@@ -732,6 +750,17 @@ function renderBiggestMovement(model){
 }
 function renderMovementReport(){
   const status=$('reportStatus'),model=historyModel();
+  const next=model.roundType==='top5';
+  document.querySelector('#rankReports h2').textContent=next?'Top 5 round — 10 kids remaining':'Top 10 round — 15 kids remaining';
+  document.querySelector('#rankReports > p.muted').textContent=next
+    ?'Starting rank versus now for the 10 children competing for the Top 5. The baseline is the first successful snapshot after October 8 at 10:00 PM Toronto time.'
+    :'Starting rank versus now for all 15 kids still competing in the Top 10 round. This round begins Thursday, Oct 1 at 10:00 p.m. Toronto time. At the next cutoff, only the Top 10 advance.';
+  document.querySelector('#currentRankReport p.muted').textContent=next
+    ?'All 10. Start is fixed to the first complete snapshot after October 8 at 10 PM Toronto time. Previous is the immediately preceding hourly snapshot.'
+    :'All 15. The Start column is frozen to the ranking at the beginning of this round and never changes. Previous is the snapshot just before the latest one.';
+  document.querySelector('#biggestMovementReport p.muted').textContent=next
+    ?'Same 10 kids, sorted by their biggest rise between saved hourly snapshots.'
+    :'Same 15 kids, sorted by the biggest climb between two saved snapshots in this round.';
   $('reportSnapshots').textContent=model.times.length;
   const aly=model.series.find(s=>s.id===VOTE);
   const latestAly=aly&&aly.points.length?aly.points[aly.points.length-1]:null;
@@ -741,10 +770,12 @@ function renderMovementReport(){
   if(latestAly!=null){
     const delta=prevAly!=null?prevAly-latestAly:null;
     $('todayRank').textContent='#'+latestAly+(delta>0?' ↑'+delta:delta<0?' ↓'+Math.abs(delta):'');
-    $('todayTop10').textContent='Top 10 round';
+    $('todayTop10').textContent=next?'Top 5 round':'Top 10 round';
   }
   if(!model.times.length){status.textContent='No valid 15-contestant snapshot has been recorded yet.';return}
-  status.textContent=`All 15 kids in the Top 10 round · ${model.times.length} snapshot${model.times.length===1?'':'s'} from ${captureLabel(model.times[0])} through ${captureLabel(model.times[model.times.length-1])}. Starting baseline: Oct 1 at 9:12 p.m. Toronto time (last real 20-kid snapshot before cutoff, filtered to the 15 who advanced).`;
+  status.textContent=next
+    ?`All 10 kids in the Top 5 round · ${model.times.length} snapshot${model.times.length===1?'':'s'} from ${captureLabel(model.times[0])} through ${captureLabel(model.times[model.times.length-1])}. Starting baseline: the first saved 10-child snapshot.`
+    :`All 15 kids in the Top 10 round · ${model.times.length} snapshot${model.times.length===1?'':'s'} from ${captureLabel(model.times[0])} through ${captureLabel(model.times[model.times.length-1])}. Starting baseline: Oct 1 at 9:12 p.m. Toronto time (last real 20-kid snapshot before cutoff, filtered to the 15 who advanced).`;
   renderCurrentRank(model);renderBiggestMovement(model);
   if(currentKind()!=='custom'&&!$('myPeopleMessage').value)fillMessageFor('');
 }
