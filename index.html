@@ -159,7 +159,7 @@ details.card>summary::-webkit-details-marker{display:none}
     </label>
     <img id="votePicturePreview" alt="Selected Alycia picture" hidden style="max-width:100%;max-height:260px;object-fit:contain;border-radius:12px">
     <button class="btn primary" id="sharePictureMessage" type="button">Share picture + message</button>
-    <p class="muted" style="font-size:.8rem">Choose Alycia's saved picture, tap Share picture + message, then choose Messages and one recipient. If the voting text is missing, paste it under the picture before sending. Never send the webpage link instead.</p>
+    <p class="muted" style="font-size:.8rem">Choose Alycia's photo, then tap Share picture + message. The app creates one picture with the photo first and voting message below it, so Android cannot drop the text. Choose Messages and one recipient. For a clickable link, also use Copy message and paste it into the text box.</p>
   </div>
   <div class="people-toolbar">
     <button class="btn primary big" id="textSelected" type="button">Text selected</button>
@@ -315,22 +315,80 @@ $('votePicture').addEventListener('change',()=>{
   preview.hidden=!file;
   if(file){preview.dataset.url=URL.createObjectURL(file);preview.src=preview.dataset.url}
 });
+async function makeVoteCard(file,message){
+  const url=URL.createObjectURL(file);
+  let photo;
+  try{
+    photo=await new Promise((resolve,reject)=>{
+      const img=new Image();
+      img.onload=()=>resolve(img);
+      img.onerror=()=>reject(new Error('Could not read picture'));
+      img.src=url;
+    });
+  }finally{URL.revokeObjectURL(url)}
+  const W=1080,pad=56,inner=W-pad*2;
+  const imageHeight=Math.min(1080,Math.max(480,Math.round(inner*photo.naturalHeight/photo.naturalWidth)));
+  const c=document.createElement('canvas'),ctx=c.getContext('2d');
+  if(!ctx)throw Error('Canvas unavailable');
+  const fontSize=43,lineHeight=60;
+  ctx.font='600 '+fontSize+'px system-ui, sans-serif';
+  const lines=[];
+  for(const paragraph of message.split(/\n/)){
+    if(!paragraph.trim()){lines.push('');continue}
+    let line='';
+    for(const word of paragraph.split(/\s+/)){
+      const candidate=line?line+' '+word:word;
+      if(ctx.measureText(candidate).width<=inner){line=candidate;continue}
+      if(line){lines.push(line);line=''}
+      let remaining=word;
+      while(remaining&&ctx.measureText(remaining).width>inner){
+        let n=1;
+        while(n<remaining.length&&ctx.measureText(remaining.slice(0,n+1)).width<=inner)n++;
+        lines.push(remaining.slice(0,n));
+        remaining=remaining.slice(n);
+      }
+      line=remaining;
+    }
+    if(line)lines.push(line);
+  }
+  c.width=W;
+  c.height=pad+imageHeight+44+Math.max(1,lines.length)*lineHeight+pad;
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);
+  const ratio=Math.min(inner/photo.naturalWidth,imageHeight/photo.naturalHeight);
+  const drawW=photo.naturalWidth*ratio,drawH=photo.naturalHeight*ratio;
+  ctx.drawImage(photo,pad+(inner-drawW)/2,pad+(imageHeight-drawH)/2,drawW,drawH);
+  ctx.fillStyle='#252036';ctx.font='600 '+fontSize+'px system-ui, sans-serif';
+  ctx.textBaseline='top';
+  let y=pad+imageHeight+44;
+  for(const line of lines){ctx.fillText(line,pad,y);y+=lineHeight}
+  const blob=await new Promise(resolve=>c.toBlob(resolve,'image/png'));
+  if(!blob)throw Error('Could not create picture');
+  return new File([blob],'Alycia-vote-picture-and-message.png',{type:'image/png'});
+}
 $('sharePictureMessage').addEventListener('click',async()=>{
   const file=$('votePicture').files?.[0];
   if(!file)return toast('Choose Alycia picture first');
   const message=$('myPeopleMessage').value.trim();
   if(!message)return toast('Choose or write a message first');
-  if(!navigator.share||!navigator.canShare?.({files:[file]})){
-    await copy(message);
-    alert('Message copied. Open Messages, attach Alycia picture, then paste the voting message.');
-    return;
-  }
-  // Android can omit shared text when a file is included. Put it on the clipboard too.
-  try{await navigator.clipboard.writeText(message)}catch(e){}
+  const button=$('sharePictureMessage');
+  button.disabled=true;button.textContent='Preparing picture…';
   try{
-    await navigator.share({files:[file],text:message,title:'Vote for Alycia'});
-    alert('Check your message before sending. If the voting text is missing, paste it from your clipboard underneath the photo.');
-  }catch(e){if(e?.name!=='AbortError')alert('Could not share the photo. Open Messages, attach the picture, then paste the voting text.');}
+    const card=await makeVoteCard(file,message);
+    // Share a single image: Android Messages sometimes drops text from file+text shares.
+    // Text is printed below the photo so it cannot be lost by the receiving app.
+    if(navigator.share&&navigator.canShare?.({files:[card]})){
+      await navigator.share({files:[card]});
+      toast('Check the photo and message, then send');
+    }else{
+      const url=URL.createObjectURL(card);
+      const a=document.createElement('a');a.href=url;a.download=card.name;
+      document.body.appendChild(a);a.click();a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),30000);
+      alert('Picture with message saved. Attach it in Messages to send.');
+    }
+  }catch(e){
+    if(e?.name!=='AbortError'){console.error(e);alert('Could not prepare picture: '+e.message)}
+  }finally{button.disabled=false;button.textContent='Share picture + message'}
 });
 function getWho(){let who=($('activityWho').value||'').trim();if(!who){who=(prompt('Your first name:','')||'').trim()}if(who)saveWho(who);return who}
 
