@@ -154,6 +154,12 @@ details.card>summary::-webkit-details-marker{display:none}
     </label>
     <textarea id="myPeopleMessage" rows="4" maxlength="320"></textarea>
     <p class="sms-meta" id="smsMeta">0 characters</p>
+    <label>Picture to send (choose Alycia's photo from your phone)
+      <input id="votePicture" type="file" accept="image/*">
+    </label>
+    <img id="votePicturePreview" alt="Selected Alycia picture" hidden style="max-width:100%;max-height:260px;object-fit:contain;border-radius:12px">
+    <button class="btn primary" id="sharePictureMessage" type="button">Share picture + message</button>
+    <p class="muted" style="font-size:.8rem">Choose Alycia's saved picture once, then tap Share picture + message. Choose Messages and one recipient. Some phones may not include the text automatically; check before sending.</p>
   </div>
   <div class="people-toolbar">
     <button class="btn primary big" id="textSelected" type="button">Text selected</button>
@@ -300,7 +306,27 @@ function unpackLabel(label){
   if(parts.length<3||!/^[0-9a-f]{16}$/.test(parts[1]))return null;
   return {display:parts[0], name:parts[1], phone:parts[2]};
 }
-function saveWho(who){localStorage.setItem('alycia.activityWho',who);localStorage.setItem('alycia.checker',who);$('activityWho').value=who;if($('checker'))$('checker').value=who}
+function saveWho(who){localStorage.setItem('alycia.activityWho',who);localStorage.setItem('alycia.checker',who);$('votePicture').onchange=()=>{
+  const file=$('votePicture').files?.[0];
+  const preview=$('votePicturePreview');
+  if(preview.dataset.url)URL.revokeObjectURL(preview.dataset.url);
+  preview.hidden=!file;
+  if(file){preview.dataset.url=URL.createObjectURL(file);preview.src=preview.dataset.url}
+};
+$('sharePictureMessage').onclick=async()=>{
+  const file=$('votePicture').files?.[0];
+  if(!file)return toast('Choose Alycia picture first');
+  const message=$('myPeopleMessage').value.trim();
+  if(!message)return toast('Choose or write a message first');
+  if(!navigator.share||!navigator.canShare?.({files:[file]})){
+    await copy(message);
+    toast('Text copied. Attach the picture manually in Messages.');
+    return;
+  }
+  try{await navigator.share({files:[file],text:message,title:'Vote for Alycia'});}
+  catch(e){if(e?.name!=='AbortError')toast('Could not share. Try again.');}
+};
+$('activityWho').value=who;if($('checker'))$('checker').value=who}
 function getWho(){let who=($('activityWho').value||'').trim();if(!who){who=(prompt('Your first name:','')||'').trim()}if(who)saveWho(who);return who}
 
 function loadMyPeople(){
