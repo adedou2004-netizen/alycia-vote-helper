@@ -146,6 +146,7 @@ details.card>summary::-webkit-details-marker{display:none}
     <label>Message
       <select id="messagePreset">
         <option value="rotate">Daily vote, wording changes</option>
+        <option value="voteToday">Vote today (short)</option>
         <option value="rank">Short rank update</option>
         <option value="thanks">Thank you</option>
         <option value="custom">Custom message below</option>
@@ -362,6 +363,7 @@ function templateBody(kind, name){
     `Hey ${who}, if you have a minute, Alycia could use today's free vote. She is ${rank}. ${VOTE}`,
     `${who}, a quick vote for Alycia today? She is ${rank}. ${VOTE} Thanks!`
   ];
+  if(kind==='voteToday')return `Quick FREE vote for Alycia today! ${VOTE}`;
   if(kind==='rank')return `Hi ${who} — Alycia is ${rank} in the Top 10. Vote here: ${VOTE}`;
   if(kind==='thanks')return `Thank you ${who} so much for supporting Alycia! Today is special — you get 2 FREE votes, so please use both for Alycia. Every vote helps! ${VOTE}`;
   const day=Number(today().slice(8,10))||1;
