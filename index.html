@@ -737,9 +737,16 @@ async function loadMovementReport(showToast=false){
   const status=$('reportStatus');
   if(status)status.textContent='Loading reports…';
   try{
-    const r=await fetch(`${SUPA}/rest/v1/alycia_group_rank_snapshots?select=snapshot_date,captured_at,contestant_name,rank,profile_url&order=captured_at.desc,rank.asc&limit=5000`,{headers:headers()});
-    if(!r.ok)throw Error(r.status);
-    groupSnapshots=await r.json();
+    const rows=[];
+    // Page through the round history so the fixed starting snapshot is retained.
+    for(let offset=0;;offset+=1000){
+      const r=await fetch(`${SUPA}/rest/v1/alycia_group_rank_snapshots?select=snapshot_date,captured_at,contestant_name,rank,profile_url&captured_at=gte.${encodeURIComponent(TOP10_ROUND_START_AT)}&order=captured_at.desc,rank.asc&limit=1000&offset=${offset}`,{headers:headers(),cache:'no-store'});
+      if(!r.ok)throw Error(r.status);
+      const page=await r.json();
+      rows.push(...page);
+      if(page.length<1000)break;
+    }
+    groupSnapshots=rows;
     renderMovementReport();
     if(showToast)toast('Reports refreshed');
   }catch(e){console.error(e);if(status)status.textContent='Could not load the movement reports'}
@@ -904,6 +911,10 @@ loadShared();
 loadRanks();
 loadMovementReport();
 setInterval(()=>loadShared(),15000);
+// Refresh saved ranks while open and immediately when returning from another app.
+setInterval(()=>{if(!document.hidden)loadMovementReport()},60000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadMovementReport()});
+window.addEventListener('pageshow',event=>{if(event.persisted)loadMovementReport()});
 </script>
 </body>
 </html>
