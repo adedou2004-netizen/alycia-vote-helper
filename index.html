@@ -105,7 +105,7 @@ details.card>summary::-webkit-details-marker{display:none}
     </label>
   </div>
   <div class="today-grid">
-    <div class="today-box"><strong id="todayRank">—</strong><span>Alycia rank</span></div>
+    <div class="today-box"><strong id="todayRank">—</strong><span>Previous-round rank</span></div>
     <div class="today-box"><strong id="todayTop10">—</strong><span>Contest phase</span></div>
     <div class="today-box"><strong id="todayDue">0</strong><span>My daily due</span></div>
     <div class="today-box"><strong id="todayContacted">0</strong><span>Circle contacted today</span></div>
@@ -156,8 +156,8 @@ details.card>summary::-webkit-details-marker{display:none}
       <select id="messagePreset">
         <option value="rotate">Daily vote, wording changes</option>
         <option value="voteToday">Vote today (short)</option>
-        <option value="thanksgiving">Thanksgiving · 2 free votes</option>
-        <option value="rank">Short rank update</option>
+        <option value="thanksgiving">Wild Card reminder</option>
+        <option value="rank">Wild Card update</option>
         <option value="thanks">Thank you</option>
         <option value="custom">Custom message below</option>
       </select>
@@ -212,15 +212,15 @@ details.card>summary::-webkit-details-marker{display:none}
 
 <section class="card section-anchor" id="rankReports">
   <p class="eyebrow">REPORTS</p>
-  <h2>Top 10 round — 15 kids remaining</h2>
-  <p class="muted">Starting rank versus now for all 15 kids still competing in the Top 10 round. This round begins Thursday, Oct 1 at 10:00 p.m. Toronto time. At the next cutoff, only the Top 10 advance. Green climbed. Red dropped. The bottom of the list matters.</p>
+  <h2>Previous round — Final Five (archived)</h2>
+  <p class="muted">Historical ranking snapshots from earlier rounds. Alycia is now in the Wild Card contest; this table does not represent the current Wild Card standings.</p>
   <div class="actions">
     <button class="btn" id="refreshMovement" type="button">Refresh</button>
     <button class="btn" id="downloadRankingSheet" type="button">Download spreadsheet</button>
   </div>
   <div id="movementReport">
     <div class="report-kpis">
-      <div class="report-kpi"><strong id="reportAlycia">—</strong><span>Alycia latest rank</span></div>
+      <div class="report-kpi"><strong id="reportAlycia">—</strong><span>Alycia previous-round rank</span></div>
       <div class="report-kpi"><strong id="reportBiggest">—</strong><span>Largest one-snapshot rise</span></div>
       <div class="report-kpi"><strong id="reportSnapshots">0</strong><span>Snapshots saved</span></div>
     </div>
@@ -474,19 +474,17 @@ function addMyPerson(name,phone='',listType='daily'){
 function rankWord(){return latestRank!=null?'#'+latestRank:'in her group'}
 function templateBody(kind, name){
   const who=firstName(name);
-  const rank=rankWord();
   const daily=[
-    `Hi ${who} — Alycia is ${rank} today. One free Super Kid vote helps: ${VOTE} Thank you!`,
-    `Hey ${who}, if you have a minute, Alycia could use today's free vote. She is ${rank}. ${VOTE}`,
-    `${who}, a quick vote for Alycia today? She is ${rank}. ${VOTE} Thanks!`
+    `Hi ${who}, Alycia is in the Wild Card round! Please support her with your free vote if available: ${VOTE} Thank you!`,
+    `Hey ${who}, Alycia has another chance in the Wild Card contest. Every free vote helps. ${VOTE}`,
+    `${who}, please keep voting for Alycia in the Wild Card round! ${VOTE} Thanks so much!`
   ];
-  if(kind==='thanksgiving')return `🍁🦃 Wishing you and your loved ones a beautiful Thanksgiving filled with love, joy, and blessings! ❤️ We're so grateful for your support! 💕 Today you get 2 FREE votes for Alycia! 🦸‍♀️ Every vote means so much! 💗 ${VOTE}`;
-  if(kind==='voteToday')return `Quick FREE vote for Alycia today! ${VOTE}`;
-  if(kind==='rank')return `Hi ${who} — Alycia is ${rank} ${new Date()>=new Date(FINAL_FIVE_START_AT)?'among the final five':'in her group'}. Vote here: ${VOTE}`;
-  if(kind==='thanks')return `Thank you ${who} so much for supporting Alycia! Today is special — you get 2 FREE votes, so please use both for Alycia. Every vote helps! ${VOTE}`;
+  if(kind==='thanksgiving')return `Alycia is in the Wild Card round! She has another chance to continue. Please vote if you can: ${VOTE} Thank you!`;
+  if(kind==='voteToday')return `Please vote for Alycia in the Wild Card round! ${VOTE}`;
+  if(kind==='rank')return `Hi ${who}, Alycia is now in the Wild Card contest, not the Final Five. Please keep supporting her! ${VOTE}`;
+  if(kind==='thanks')return `Thank you ${who} for supporting Alycia! She's in the Wild Card round and has another chance. Please keep voting! ${VOTE}`;
   const day=Number(today().slice(8,10))||1;
-  const offset=(name?normalizeName(name).length:0);
-  return daily[(day+offset)%daily.length];
+  return daily[(day+(name?normalizeName(name).length:0))%daily.length];
 }
 function currentKind(){return $('messagePreset').value}
 function fillMessageFor(name){
@@ -925,14 +923,11 @@ function renderBiggestMovement(model){
 }
 function renderMovementReport(){
   const status=$('reportStatus'),model=historyModel();
+  $('todayTop10').textContent='Wild Card';
   const next=model.roundType==='top5';
   const finals=model.roundType==='final5';
-  document.querySelector('#rankReports h2').textContent=finals?'Final Five — 5 kids remaining':next?'Top 5 round — 10 kids remaining':'Top 10 round — 15 kids remaining';
-  document.querySelector('#rankReports > p.muted').textContent=finals
-    ?'Starting rank versus now for the five remaining contestants. The starting positions are frozen to the first verified five-child snapshot at or after October 15, 10:12 p.m. Toronto time.'
-    :next
-    ?'Starting rank versus now for the 10 children competing for the Top 5. The baseline is the first successful snapshot after October 8 at 10:00 PM Toronto time.'
-    :'Starting rank versus now for all 15 kids still competing in the Top 10 round. This round begins Thursday, Oct 1 at 10:00 p.m. Toronto time. At the next cutoff, only the Top 10 advance.';
+  document.querySelector('#rankReports h2').textContent='Previous round — ranking history (archived)';
+  document.querySelector('#rankReports > p.muted').textContent='Historical snapshots from previous rounds. Alycia is now competing in the Wild Card; these ranks are not live Wild Card standings.';
   document.querySelector('#currentRankReport p.muted').textContent=finals
     ?'All 5. Start is frozen at the first complete five-child snapshot. Previous is the immediately preceding snapshot.'
     :next
@@ -952,14 +947,14 @@ function renderMovementReport(){
   if(latestAly!=null){
     const delta=prevAly!=null?prevAly-latestAly:null;
     $('todayRank').textContent='#'+latestAly+(delta>0?' ↑'+delta:delta<0?' ↓'+Math.abs(delta):'');
-    $('todayTop10').textContent=finals?'Final Five':next?'Top 5 round':'Top 10 round';
+    $('todayTop10').textContent='Wild Card';
   }
-  if(!model.times.length){status.textContent='No valid round snapshot has been recorded yet.';return}
-  status.textContent=finals
+  if(!model.times.length){status.textContent='No historical ranking snapshots available. Wild Card is the current phase.';return}
+  status.textContent='Archived previous-round results — not Wild Card standings. '+(finals
     ?`All 5 finalists · ${model.times.length} snapshot${model.times.length===1?'':'s'} from ${captureLabel(model.times[0])} through ${captureLabel(model.times[model.times.length-1])}. Starting baseline: first verified five-child snapshot at or after Oct 15, 10:12 p.m. Toronto time.`
     :next
     ?`All 10 kids in the Top 5 round · ${model.times.length} snapshot${model.times.length===1?'':'s'} from ${captureLabel(model.times[0])} through ${captureLabel(model.times[model.times.length-1])}. Starting baseline: the first saved 10-child snapshot.`
-    :`All 15 kids in the Top 10 round · ${model.times.length} snapshot${model.times.length===1?'':'s'} from ${captureLabel(model.times[0])} through ${captureLabel(model.times[model.times.length-1])}. Starting baseline: Oct 1 at 9:12 p.m. Toronto time (last real 20-kid snapshot before cutoff, filtered to the 15 who advanced).`;
+    :`All 15 kids in the Top 10 round · ${model.times.length} snapshot${model.times.length===1?'':'s'} from ${captureLabel(model.times[0])} through ${captureLabel(model.times[model.times.length-1])}. Starting baseline: Oct 1 at 9:12 p.m. Toronto time (last real 20-kid snapshot before cutoff, filtered to the 15 who advanced).`);
   renderCurrentRank(model);renderBiggestMovement(model);
   if(currentKind()!=='custom'&&!$('myPeopleMessage').value)fillMessageFor('');
 }
