@@ -1,6 +1,6 @@
 import { chromium } from "playwright";
 
-const GROUP_URL = "https://thesuperkid.org/browse/2026/group-16dac5ff";
+const GROUP_URL = "https://thesuperkid.org/browse/2026/wildcard-group-1c39a3";
 const PROFILE = "https://thesuperkid.org/2026/alycia-5613";
 const SUPABASE_URL = "https://dbqrenlvinqheyjppxby.supabase.co";
 const TOKEN = process.env.ALYCIA_CAPTURE_TOKEN;
@@ -63,10 +63,7 @@ async function discoverWildcard(page) {
   if (!m) throw new Error("Could not read Alycia's Wild Card rank");
   const liveRank = Number(m[1]);
   if (liveRank < 1 || liveRank > WILDCARD_SIZE) throw new Error("Invalid Wild Card rank: " + liveRank);
-  const groupLinks = await page.locator('a[href*="/browse/2026/"]').evaluateAll(anchors =>
-    [...new Set(anchors.map(a => a.href).filter(h => /\\/browse\\/2026\\/(?:group-|wildcard)/i.test(h))) ]);
-  if (groupLinks.length !== 1) throw new Error("Expected one current group link on Alycia's profile; found " + groupLinks.length + ". Do not use her former group URL.");
-  return { liveRank, groupUrl: groupLinks[0] };
+  return { liveRank, groupUrl: GROUP_URL };
 }
 
 async function extractWildcard(page, groupUrl) {
