@@ -5,27 +5,9 @@ const PROFILE = "https://thesuperkid.org/2026/alycia-5613";
 const SUPABASE_URL = "https://dbqrenlvinqheyjppxby.supabase.co";
 const TOKEN = process.env.ALYCIA_CAPTURE_TOKEN;
 
-// The 15 contestants still competing in the Top 15 round.
-// At the next cutoff, only the Top 15 will advance. Eliminated contestants from
-// earlier rounds remain visible on the SuperKid page, so snapshots filter to
-// this fixed set of 15 current contestants.
-const ACTIVE_TOP_15 = new Set([
-  "https://thesuperkid.org/2026/mason-da49",
-  "https://thesuperkid.org/2026/jameson-2b6a",
-  "https://thesuperkid.org/2026/hunter-2c40",
-  "https://thesuperkid.org/2026/kai-f690",
-  "https://thesuperkid.org/2026/alycia-5613",
-  "https://thesuperkid.org/2026/kirby-285a",
-  "https://thesuperkid.org/2026/alexander-99ec",
-  "https://thesuperkid.org/2026/tristan-5092",
-  "https://thesuperkid.org/2026/trey-c5ce",
-  "https://thesuperkid.org/2026/keelan-64d0",
-  "https://thesuperkid.org/2026/ismany-4bf6",
-  "https://thesuperkid.org/2026/le-39-princeton-c0b3",
-  "https://thesuperkid.org/2026/caden-3c42",
-  "https://thesuperkid.org/2026/maxwell-c549",
-  "https://thesuperkid.org/2026/tayvien-eb48"
-]);
+// Wild Card is a new mixed-origin group of exactly four contestants.
+// Discover the current group from Alycia's profile, never her former group.
+const WILDCARD_SIZE = 4;
 
 async function sendAlert(message) {
   if (!TOKEN) throw new Error("Missing ALYCIA_CAPTURE_TOKEN");
@@ -71,58 +53,46 @@ async function scrollAndExpand(page) {
   await page.evaluate(() => window.scrollTo(0, 0));
 }
 
-async function getLiveAlyciaRank(page) {
+async function discoverWildcard(page) {
   await page.goto(PROFILE, { waitUntil: "domcontentloaded", timeout: 45000 });
-  await page.waitForTimeout(1800);
+  await page.waitForTimeout(2200);
   const body = await page.locator("body").innerText();
-  const m =
-    body.match(/Currently\s+(\d+)(?:st|nd|rd|th)?\s+in\s+their\s+Group/i) ||
-    body.match(/Currently\s+(\d+)(?:st|nd|rd|th)?/i);
-  if (!m) throw new Error("Could not read Alycia's live rank from profile");
-  return Number(m[1]);
+  if (!/Wildcard/i.test(body)) throw new Error("Alycia's profile does not show Wild Card yet");
+  const m = body.match(/Currently\\s+(\\d+)(?:st|nd|rd|th)?\\s+in\\s+the\\s+Wildcards/i)
+    || body.match(/Currently\\s+(\\d+)(?:st|nd|rd|th)?/i);
+  if (!m) throw new Error("Could not read Alycia's Wild Card rank");
+  const liveRank = Number(m[1]);
+  if (liveRank < 1 || liveRank > WILDCARD_SIZE) throw new Error("Invalid Wild Card rank: " + liveRank);
+  const groupLinks = await page.locator('a[href*="/browse/2026/"]').evaluateAll(anchors =>
+    [...new Set(anchors.map(a => a.href).filter(h => /\\/browse\\/2026\\/(?:group-|wildcard)/i.test(h))) ]);
+  if (groupLinks.length !== 1) throw new Error("Expected one current group link on Alycia's profile; found " + groupLinks.length + ". Do not use her former group URL.");
+  return { liveRank, groupUrl: groupLinks[0] };
 }
 
-async function extractTop15(page) {
-  await page.goto(GROUP_URL, { waitUntil: "domcontentloaded", timeout: 45000 });
+async function extractWildcard(page, groupUrl) {
+  await page.goto(groupUrl, { waitUntil: "domcontentloaded", timeout: 45000 });
   await page.waitForTimeout(2200);
   await scrollAndExpand(page);
-  const items = await page.locator('a[href*="/2026/"]').evaluateAll((anchors) => {
+  const items = await page.locator('a[href*="/2026/"]').evaluateAll(anchors => {
     const seen = new Map();
     for (const a of anchors) {
       const href = a.href;
-      if (!href || href.includes("/browse/") || href.includes("/rules") || href.includes("/faq")) continue;
-      if (!/^https:\/\/thesuperkid\.org\/2026\/[A-Za-z0-9_-]+\/?(?:\?.*)?$/.test(href)) continue;
-
-      const clean = href.split("?")[0].replace(/\/$/, "");
-      let name = (a.textContent || "").trim().replace(/\s+/g, " ");
-      if (!name) {
-        const img = a.querySelector("img");
-        name = (img?.getAttribute("alt") || "").trim().replace(/\s+/g, " ");
-      }
-
-      const existing = seen.get(clean);
-      if (!existing) seen.set(clean, { profile_url: clean, contestant_name: name });
-      else if (!existing.contestant_name && name) existing.contestant_name = name;
+      if (!/^https:\\/\\/thesuperkid\\.org\\/2026\\/[A-Za-z0-9_-]+\\/?(?:\\?.*)?$/.test(href)) continue;
+      const clean = href.split("?")[0].replace(/\\/$/, "");
+      let name = (a.textContent || "").trim().replace(/\\s+/g, " ");
+      if (!name) name = (a.querySelector("img")?.getAttribute("alt") || "").trim().replace(/\\s+/g, " ");
+      name = name.replace(/\\s*(Vote|View Profile).*$/i, "").trim();
+      if (!seen.has(clean)) seen.set(clean, { profile_url: clean, contestant_name: name });
+      else if (!seen.get(clean).contestant_name && name) seen.get(clean).contestant_name = name;
     }
     return [...seen.values()];
   });
-
-  const top15 = items
-    .map(x => ({
-      ...x,
-      contestant_name: x.contestant_name.replace(/\s*(Vote|View Profile).*$/i, "").trim()
-    }))
-    .filter(x => ACTIVE_TOP_15.has(x.profile_url));
-
-  if (top15.length !== ACTIVE_TOP_15.size) {
-    const found = new Set(top15.map(x => x.profile_url));
-    const missing = [...ACTIVE_TOP_15].filter(url => !found.has(url));
-    throw new Error(
-      `Expected all ${ACTIVE_TOP_15.size} Top-15 contestants but found ${top15.length}. Missing: ${missing.join(", ")}`
-    );
+  if (items.length !== WILDCARD_SIZE || !items.some(x => x.profile_url === PROFILE)) {
+    throw new Error(`Expected a four-person Wild Card group including Alycia, but found ${items.length} profile links. Refusing to save incorrect rankings.`);
   }
-
-  return top15.map((x, i) => ({ ...x, rank: i + 1 }));
+  const result = items.map((x,i) => ({ ...x, contestant_name: x.profile_url===PROFILE ? "Alycia" : x.contestant_name, rank:i+1 }));
+  if (result.some(x => !x.contestant_name)) throw new Error("One or more Wild Card contestant names were missing");
+  return result;
 }
 
 async function main() {
@@ -140,27 +110,27 @@ async function main() {
     const contestants = await extractTop15(page);
     const alycia = contestants.find(x => x.profile_url === PROFILE);
 
-    if (!alycia) throw new Error("Alycia was not found among the fixed Top 15");
+    if (!alycia) throw new Error("Alycia was not found in the Wild Card group");
     if (alycia.rank !== liveRank) {
       throw new Error(
-        `Rank verification failed: profile says #${liveRank}, filtered Top-15 order says #${alycia.rank}`
+        `Rank verification failed: profile says #${liveRank}, four-person Wild Card order says #${alycia.rank}`
       );
     }
 
     const captured_at = new Date().toISOString();
     const saved = await saveSnapshot({
       captured_at,
-      source_url: GROUP_URL,
+      source_url: groupUrl,
       contestants,
       alycia_rank: liveRank
     });
 
-    if (saved.row_count !== ACTIVE_TOP_15.size || saved.alycia_rank !== liveRank) {
+    if (saved.row_count !== WILDCARD_SIZE || saved.alycia_rank !== liveRank) {
       throw new Error("Database verification response did not match the Top-15 capture");
     }
 
     console.log(
-      `SUCCESS: saved ${saved.row_count} Top-15 contestants; Alycia #${saved.alycia_rank}; ${saved.captured_at}`
+      `SUCCESS: saved ${saved.row_count} Wild Card contestants; Alycia #${saved.alycia_rank}; ${saved.captured_at}`
     );
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
